@@ -229,7 +229,7 @@ class ScanViewController: UIViewController {
         self.meshViewController = meshViewController
         
         meshViewController.scanView = self
-        meshViewController.scanBuffer = self.scanBuffer
+        meshViewController.scanBuffer = self.scanBuffer // MainVCにmeshを渡すのに使っている（ネーミング意味不）
         meshViewController.colorizer = self
 
 //        meshViewController.setupGL(_display!.context!)
