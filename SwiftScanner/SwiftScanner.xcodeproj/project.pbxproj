@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70519AF1254BEEE50031AC54 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519AF0254BEEE50031AC54 /* Common.swift */; };
+		70519AFD255247160031AC54 /* ScannerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519AFC255247160031AC54 /* ScannerInterface.swift */; };
+		70519B012552473A0031AC54 /* SystemErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B002552473A0031AC54 /* SystemErrors.swift */; };
+		70519B04255247750031AC54 /* Implementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B03255247750031AC54 /* Implementations.swift */; };
+		70519B07255247A50031AC54 /* StructureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B06255247A50031AC54 /* StructureService.swift */; };
+		70519B0A255248410031AC54 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B09255248410031AC54 /* Constants.swift */; };
 		85AAAC8C2486911100C28132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8B2486911100C28132 /* AppDelegate.swift */; };
 		85AAAC8E2486911100C28132 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8D2486911100C28132 /* SceneDelegate.swift */; };
 		85AAAC902486911100C28132 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8F2486911100C28132 /* MainViewController.swift */; };
@@ -22,9 +28,6 @@
 		85AAACC02487A87D00C28132 /* OSLogExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACBF2487A87D00C28132 /* OSLogExtensions.swift */; };
 		85AAACC32487DFFE00C28132 /* EAGLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACC22487DFFE00C28132 /* EAGLView.swift */; };
 		85AAACC82488280600C28132 /* ScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACC72488280600C28132 /* ScanViewController.swift */; };
-		85AAACCA2488282000C28132 /* ScanViewController+CaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACC92488282000C28132 /* ScanViewController+CaptureSession.swift */; };
-		85AAACCC2488284000C28132 /* ScanViewController+SLAM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACCB2488284000C28132 /* ScanViewController+SLAM.swift */; };
-		85AAACCE2488284F00C28132 /* ScanViewController+OpenGL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACCD2488284F00C28132 /* ScanViewController+OpenGL.swift */; };
 		85AAACD024882F4D00C28132 /* CaptureSessionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACCF24882F4D00C28132 /* CaptureSessionError.swift */; };
 		85AAACD22488399900C28132 /* VisualSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACD12488399900C28132 /* VisualSettings.swift */; };
 		85AAACD4248839C700C28132 /* ColorMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACD3248839C700C28132 /* ColorMap.swift */; };
@@ -69,6 +72,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		70519AF0254BEEE50031AC54 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		70519AFC255247160031AC54 /* ScannerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerInterface.swift; sourceTree = "<group>"; };
+		70519B002552473A0031AC54 /* SystemErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemErrors.swift; sourceTree = "<group>"; };
+		70519B03255247750031AC54 /* Implementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Implementations.swift; sourceTree = "<group>"; };
+		70519B06255247A50031AC54 /* StructureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureService.swift; sourceTree = "<group>"; };
+		70519B09255248410031AC54 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		85AAAC882486911100C28132 /* SwiftScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85AAAC8B2486911100C28132 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85AAAC8D2486911100C28132 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -90,9 +99,6 @@
 		85AAACC22487DFFE00C28132 /* EAGLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EAGLView.swift; sourceTree = "<group>"; };
 		85AAACC52487FEFA00C28132 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		85AAACC72488280600C28132 /* ScanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanViewController.swift; sourceTree = "<group>"; };
-		85AAACC92488282000C28132 /* ScanViewController+CaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScanViewController+CaptureSession.swift"; sourceTree = "<group>"; };
-		85AAACCB2488284000C28132 /* ScanViewController+SLAM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScanViewController+SLAM.swift"; sourceTree = "<group>"; };
-		85AAACCD2488284F00C28132 /* ScanViewController+OpenGL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScanViewController+OpenGL.swift"; sourceTree = "<group>"; };
 		85AAACCF24882F4D00C28132 /* CaptureSessionError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureSessionError.swift; sourceTree = "<group>"; };
 		85AAACD12488399900C28132 /* VisualSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualSettings.swift; sourceTree = "<group>"; };
 		85AAACD3248839C700C28132 /* ColorMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMap.swift; sourceTree = "<group>"; };
@@ -134,6 +140,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		70519AFB255246E50031AC54 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				70519AFC255247160031AC54 /* ScannerInterface.swift */,
+				70519B03255247750031AC54 /* Implementations.swift */,
+				70519B06255247A50031AC54 /* StructureService.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
 		85AAAC7F2486911100C28132 = {
 			isa = PBXGroup;
 			children = (
@@ -156,10 +172,14 @@
 		85AAAC8A2486911100C28132 /* SwiftScanner */ = {
 			isa = PBXGroup;
 			children = (
+				70519AFB255246E50031AC54 /* Infrastructure */,
 				85AAACEC248A368100C28132 /* MainView */,
-				85AAACDB24883C5F00C28132 /* MeshView */,
 				85AAACC12487DFDB00C28132 /* ScanView */,
+				85AAACDB24883C5F00C28132 /* MeshView */,
 				85AAACBE2487A85800C28132 /* Logging */,
+				70519AF0254BEEE50031AC54 /* Common.swift */,
+				70519B002552473A0031AC54 /* SystemErrors.swift */,
+				70519B09255248410031AC54 /* Constants.swift */,
 				85AAAC8B2486911100C28132 /* AppDelegate.swift */,
 				85AAAC8D2486911100C28132 /* SceneDelegate.swift */,
 				85AAAC912486911100C28132 /* Main.storyboard */,
@@ -205,12 +225,9 @@
 		85AAACC12487DFDB00C28132 /* ScanView */ = {
 			isa = PBXGroup;
 			children = (
-				85AAACE224883CE900C28132 /* ScanViewDelegate.swift */,
 				85AAACC22487DFFE00C28132 /* EAGLView.swift */,
+				85AAACE224883CE900C28132 /* ScanViewDelegate.swift */,
 				85AAACC72488280600C28132 /* ScanViewController.swift */,
-				85AAACC92488282000C28132 /* ScanViewController+CaptureSession.swift */,
-				85AAACCB2488284000C28132 /* ScanViewController+SLAM.swift */,
-				85AAACCD2488284F00C28132 /* ScanViewController+OpenGL.swift */,
 				85AAACCF24882F4D00C28132 /* CaptureSessionError.swift */,
 				85AAACD12488399900C28132 /* VisualSettings.swift */,
 				85AAACD3248839C700C28132 /* ColorMap.swift */,
@@ -348,26 +365,29 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70519AFD255247160031AC54 /* ScannerInterface.swift in Sources */,
 				85AAACD024882F4D00C28132 /* CaptureSessionError.swift in Sources */,
 				85AAACD824883B0000C28132 /* UIColorExtensions.swift in Sources */,
 				85AAACD6248839DA00C28132 /* ColorMapAnchor.swift in Sources */,
 				85AAACEB24883DEA00C28132 /* InitialViewModelRotation.swift in Sources */,
 				85E12967248A69420036209E /* BatteryStatusMonitor.swift in Sources */,
 				85AAACC02487A87D00C28132 /* OSLogExtensions.swift in Sources */,
+				70519B0A255248410031AC54 /* Constants.swift in Sources */,
 				85AAACEE248A377900C28132 /* ScanBufferDelegate.swift in Sources */,
+				70519B07255247A50031AC54 /* StructureService.swift in Sources */,
 				85AAACD4248839C700C28132 /* ColorMap.swift in Sources */,
 				85AAAC902486911100C28132 /* MainViewController.swift in Sources */,
-				85AAACCE2488284F00C28132 /* ScanViewController+OpenGL.swift in Sources */,
 				85AAACE924883D9900C28132 /* CustomShaders.swift in Sources */,
-				85AAACCA2488282000C28132 /* ScanViewController+CaptureSession.swift in Sources */,
 				85E12965248A52260036209E /* BatteryStatusUIStackView.swift in Sources */,
+				70519AF1254BEEE50031AC54 /* Common.swift in Sources */,
 				85AAACD22488399900C28132 /* VisualSettings.swift in Sources */,
 				85AAAC8C2486911100C28132 /* AppDelegate.swift in Sources */,
 				85AAACE324883CE900C28132 /* ScanViewDelegate.swift in Sources */,
-				85AAACCC2488284000C28132 /* ScanViewController+SLAM.swift in Sources */,
+				70519B012552473A0031AC54 /* SystemErrors.swift in Sources */,
 				85AAACDF24883C8400C28132 /* MeshViewController.swift in Sources */,
 				85AAACE724883D4C00C28132 /* ViewPointController.swift in Sources */,
 				85AAACE524883D4200C28132 /* MeshRenderer.swift in Sources */,
+				70519B04255247750031AC54 /* Implementations.swift in Sources */,
 				85E12969248A6CF30036209E /* BatteryStatusListenerDelegate.swift in Sources */,
 				85AAACC32487DFFE00C28132 /* EAGLView.swift in Sources */,
 				85AAACF0248A41DC00C28132 /* ColorizeDelegate.swift in Sources */,
@@ -537,7 +557,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9H7R28Z4C5;
+				DEVELOPMENT_TEAM = X6UZ6GLW57;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -562,7 +582,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 9H7R28Z4C5;
+				DEVELOPMENT_TEAM = X6UZ6GLW57;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

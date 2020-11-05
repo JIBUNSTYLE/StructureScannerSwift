@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="ipad12_9" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XDa-pW-Wy1" userLabel="Button - New Scan">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XDa-pW-Wy1" userLabel="Button - New Scan">
                                 <rect key="frame" x="50" y="488" width="131" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="New Scan"/>
@@ -36,7 +38,7 @@
                                     <constraint firstAttribute="height" constant="50" id="TNR-eU-nXK"/>
                                 </constraints>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8to-nL-N5C" userLabel="Button - Send">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8to-nL-N5C" userLabel="Button - Send">
                                 <rect key="frame" x="1248" y="488" width="68" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Send"/>
@@ -44,7 +46,7 @@
                                     <action selector="sendButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ddu-qU-wBh"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fA7-SP-gVZ" userLabel="Button - Delete Scans">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fA7-SP-gVZ" userLabel="Button - Delete Scans">
                                 <rect key="frame" x="598" y="605.5" width="170" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Delete Scans">
@@ -55,7 +57,8 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8to-nL-N5C" secondAttribute="trailing" constant="50" id="59I-AM-0kL"/>
                             <constraint firstItem="8to-nL-N5C" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="N4S-zf-fgw"/>
@@ -68,7 +71,6 @@
                             <constraint firstItem="5rz-Xo-4lm" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yIQ-Ub-N4I"/>
                             <constraint firstItem="5rz-Xo-4lm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zXy-1n-nO0"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="batteryStatusControl" destination="Iux-9l-9F1" id="DKc-xd-SkM"/>
@@ -89,7 +91,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c0g-tb-6c4" userLabel="Button - Back">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="c0g-tb-6c4" userLabel="Button - Back">
                                 <rect key="frame" x="50" y="488" width="65" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Back"/>
@@ -97,7 +99,7 @@
                                     <segue destination="vRi-dc-iEb" kind="unwind" identifier="unwindScanToMainView" unwindAction="unwindToMainViewWithSegue:" id="khY-ZH-JvO"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EPf-Ky-7aq" userLabel="Button - Scan">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EPf-Ky-7aq" userLabel="Button - Scan">
                                 <rect key="frame" x="1250" y="488" width="66" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Scan"/>
@@ -105,7 +107,7 @@
                                     <action selector="scanButtonPressed:" destination="aya-tM-9B2" eventType="touchUpInside" id="TJN-YY-8IP"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FQh-v6-NmQ" userLabel="Button - Reset">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FQh-v6-NmQ" userLabel="Button - Reset">
                                 <rect key="frame" x="1242" y="588" width="74" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Reset"/>
@@ -113,8 +115,8 @@
                                     <action selector="resetButtonPressed:" destination="aya-tM-9B2" eventType="touchUpInside" id="kD2-Cy-AO9"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yXg-nL-PoW" userLabel="Button - Done">
-                                <rect key="frame" x="1247" y="488" width="69" height="48"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yXg-nL-PoW" userLabel="Button - Done">
+                                <rect key="frame" x="1246" y="488" width="70" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Done"/>
                                 <connections>
@@ -122,13 +124,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Structure Sensor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wGh-36-TyV" userLabel="Label - App Status Message">
-                                <rect key="frame" x="554" y="490.5" width="258.5" height="43"/>
+                                <rect key="frame" x="554" y="490.5" width="258" height="43"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="36"/>
                                 <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tracking Lost. Try to re-align or press reset." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mh1-Ib-McR" userLabel="Label - Tracking Lost">
-                                <rect key="frame" x="355" y="931" width="656" height="43"/>
+                                <rect key="frame" x="357" y="931" width="652.5" height="43"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="36"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -167,7 +169,8 @@
                                 </constraints>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="pAM-gy-OAO"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="0Wv-p6-dgq" firstAttribute="centerX" secondItem="qsB-hP-kLN" secondAttribute="centerX" id="1Lu-gU-Gfc"/>
@@ -187,7 +190,6 @@
                             <constraint firstItem="c0g-tb-6c4" firstAttribute="centerY" secondItem="qsB-hP-kLN" secondAttribute="centerY" id="nwg-0y-7dN"/>
                             <constraint firstItem="wGh-36-TyV" firstAttribute="centerY" secondItem="qsB-hP-kLN" secondAttribute="centerY" id="veV-rQ-emv"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="pAM-gy-OAO"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="ejb-16-7me" appends="YES" id="Cg8-Jj-iRr"/>
                         </connections>
@@ -225,7 +227,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="1366" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A6l-XJ-Jii">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A6l-XJ-Jii">
                                 <rect key="frame" x="50" y="488" width="65" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Back"/>
@@ -233,7 +235,7 @@
                                     <segue destination="rL9-T4-wf5" kind="unwind" identifier="unwindMeshToScanView" unwindAction="unwindToScanViewWithSegue:" id="YxK-rp-phP"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kSc-qO-5Sw">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kSc-qO-5Sw">
                                 <rect key="frame" x="45.5" y="586" width="74" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Reset"/>
@@ -241,8 +243,8 @@
                                     <action selector="resetView:" destination="J5c-5e-lgR" eventType="touchUpInside" id="9Zn-I7-r4a"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RDD-ai-12y">
-                                <rect key="frame" x="1224" y="488" width="92" height="48"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RDD-ai-12y">
+                                <rect key="frame" x="1223" y="488" width="93" height="48"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
                                 <state key="normal" title="Accept"/>
                                 <connections>
@@ -260,6 +262,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="47o-Q2-7KM"/>
                         <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <gestureRecognizers/>
                         <constraints>
@@ -272,7 +275,6 @@
                             <constraint firstItem="kSc-qO-5Sw" firstAttribute="top" secondItem="A6l-XJ-Jii" secondAttribute="bottom" constant="50" id="jf1-Xx-VNA"/>
                             <constraint firstItem="A6l-XJ-Jii" firstAttribute="leading" secondItem="47o-Q2-7KM" secondAttribute="leading" constant="50" id="nWZ-y3-ulc"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="47o-Q2-7KM"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="dQl-g8-qzK" appends="YES" id="43O-dT-0B8"/>
                             <outletCollection property="gestureRecognizers" destination="2Yi-0G-KRu" appends="YES" id="CRW-9T-qyY"/>
@@ -313,5 +315,8 @@
     </scenes>
     <resources>
         <image name="SensorBatteryLow" width="270" height="68"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

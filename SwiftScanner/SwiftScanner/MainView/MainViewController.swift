@@ -9,7 +9,7 @@
 import UIKit
 import os.log
 
-class MainViewController: UIViewController, ScanBufferDelegate {
+class MainViewController: UIViewController {
 
     fileprivate var meshes = [STMesh]()
     fileprivate var files = [String]()
@@ -79,19 +79,9 @@ class MainViewController: UIViewController, ScanBufferDelegate {
             return
         }
     }
-
-    //MARK: ScanBufferDelegate
-    func addScan(_ mesh: STMesh)
-    {
-        self.meshes.append(mesh)
-        self.sendButton.isHidden = self.meshes.count < 1
-        self.deleteScansButton.isHidden = self.meshes.count < 1
-        let messageStringFormat = NSLocalizedString("COLLECTED__0__SCANS", comment: "")
-        let message = String.init(format: messageStringFormat, self.meshes.count)
-        self.scanMessageLabel.text = message
-    }
     
     //MARK: - UI Callbacks
+    
     @IBAction func sendButtonPressed(_ sender: UIButton) {
         
         self.batteryStatusControl.stop()
@@ -148,6 +138,11 @@ class MainViewController: UIViewController, ScanBufferDelegate {
         self.scanMessageLabel.text = NSLocalizedString("NO_SCANS_COLLECTED_YET", comment: "")
         self.deleteScansButton.isHidden = true
     }
+
+}
+
+// MARK: - Private
+extension MainViewController {
     
     private func deleteAllFiles() {
         for filePath in self.files {
@@ -163,7 +158,6 @@ class MainViewController: UIViewController, ScanBufferDelegate {
             }
         }
     }
-    
     
     private func saveMesh(mesh: STMesh, fileName : String) -> (filePath: String, fileURL: NSURL)? {
         let filePath = getDocumentsDirectory().appendingPathComponent(fileName)
@@ -190,5 +184,18 @@ class MainViewController: UIViewController, ScanBufferDelegate {
            let documentsDirectory = paths[0]
            return documentsDirectory as NSString
        }
+}
+
+extension MainViewController : ScanBufferDelegate {
+
+    //MARK: ScanBufferDelegate
+    func addScan(_ mesh: STMesh) {
+        self.meshes.append(mesh)
+        self.sendButton.isHidden = self.meshes.count < 1
+        self.deleteScansButton.isHidden = self.meshes.count < 1
+        let messageStringFormat = NSLocalizedString("COLLECTED__0__SCANS", comment: "")
+        let message = String.init(format: messageStringFormat, self.meshes.count)
+        self.scanMessageLabel.text = message
+    }
 }
 

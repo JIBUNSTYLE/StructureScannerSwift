@@ -92,7 +92,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         
         super.viewDidLoad()
 
-        renderer = MeshRenderer.init()
+        renderer = MeshRenderer()
         
         viewpointController = ViewpointController.init(screenSizeX: Float(self.view.frame.size.width), screenSizeY: Float(self.view.frame.size.height))
     }
