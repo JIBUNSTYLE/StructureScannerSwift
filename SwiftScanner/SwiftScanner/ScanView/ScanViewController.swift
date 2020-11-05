@@ -232,33 +232,30 @@ class ScanViewController: UIViewController {
         meshViewController.scanBuffer = self.scanBuffer // MainVCにmeshを渡すのに使っている（ネーミング意味不）
         meshViewController.colorizer = self
 
-//        meshViewController.setupGL(_display!.context!)
+//        meshViewController.setup(context: display!.context!, with: mesh)
         meshViewController.colorEnabled = true
-        meshViewController.mesh = mesh
 //        meshViewController.setCameraProjectionMatrix(_display!.depthCameraGLProjectionMatrix)
 
         // Sample a few points to estimate the volume center
-        var totalNumVertices: Int32 = 0
-
-        for  i in 0..<mesh.numberOfMeshes() {
-            totalNumVertices += mesh.number(ofMeshVertices: Int32(i))
-        }
-
+        let totalNumVertices = [Int32](0..<mesh.numberOfMeshes())
+            .reduce(into: 0) { (sum, i) in
+                sum += mesh.number(ofMeshVertices: Int32(i))
+            }
+        
         // The sample step if we need roughly 1000 sample points
         let sampleStep = Int(max(1, totalNumVertices / 1000))
-        var sampleCount: Int32 = 0
-        var volumeCenter = GLKVector3Make(0, 0, 0)
-
-        for i in 0..<mesh.numberOfMeshes() {
-            let numVertices = Int(mesh.number(ofMeshVertices: i))
-            let vertex = mesh.meshVertices(Int32(i))
-
-            for j in stride(from: 0, to: numVertices, by: sampleStep) {
-                let v = (vertex?[Int(j)])!
-                volumeCenter = GLKVector3Add(volumeCenter, v)
-                sampleCount += 1
+        var (sampleCount, volumeCenter) = [Int32](0..<mesh.numberOfMeshes())
+            .reduce(into: (0, GLKVector3Make(0, 0, 0))) { (ret, i) in
+                guard let vertex = mesh.meshVertices(Int32(i)) else { return }
+                
+                let numVertices = Int(mesh.number(ofMeshVertices: i))
+                for j in stride(from: 0, to: numVertices, by: sampleStep) {
+                    let v = vertex[Int(j)]
+                    ret.0 += 1
+                    ret.1 = GLKVector3Add(ret.1, v)
+                }
             }
-        }
+        
         
         if sampleCount > 0 {
             volumeCenter = GLKVector3DivideScalar(volumeCenter, Float(sampleCount))
@@ -852,6 +849,13 @@ extension ScanViewController : ColorizeDelegate {
         self.meshViewController?.hideMeshViewerMessage()
     }
 
+    
+    /// MeshViewControllerで色を付けるときに呼ばれる
+    /// - Parameters:
+    ///   - mesh: <#mesh description#>
+    ///   - previewCompletionHandler: <#previewCompletionHandler description#>
+    ///   - enhancedCompletionHandler: <#enhancedCompletionHandler description#>
+    /// - Returns: <#description#>
     func meshViewDidRequestColorizing(_ mesh: STMesh, previewCompletionHandler: @escaping () -> Void, enhancedCompletionHandler: @escaping () -> Void) -> Bool {
         // TODO
 //

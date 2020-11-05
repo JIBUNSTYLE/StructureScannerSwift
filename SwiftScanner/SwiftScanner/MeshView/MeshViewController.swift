@@ -35,23 +35,23 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     
     var mesh: STMesh? {
         get {
-            return _mesh
+            return self._mesh
         }
         set {
-            if let _ = _mesh {
+            if let _ = self._mesh {
                 os_log(.debug, log: OSLog.meshView, "cleaned up the mesh")
                 _mesh = nil
             }
             
-            _mesh = newValue
+            self._mesh = newValue
             
-            if _mesh != nil {
-                os_log(.debug, log: OSLog.meshView, "Setting the mesh")
-                
-                self.renderer.uploadMesh(_mesh!)
-                self.trySwitchToColorRenderingMode()
-                self.needsDisplay = true
-            }
+            guard let mesh = newValue else { return }
+            
+            os_log(.debug, log: OSLog.meshView, "Setting the mesh")
+            
+            self.renderer.upload(mesh, with: self.rendererContext)
+            self.trySwitchToColorRenderingMode()
+            self.needsDisplay = true
         }
     }
     
@@ -76,6 +76,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     var viewport = [GLfloat](repeating: 0, count: 4)
     var modelViewMatrixBeforeUserInteractions: GLKMatrix4?
     var projectionMatrixBeforeUserInteractions: GLKMatrix4?
+    
+    var rendererContext: RendererContext = .unknown
         
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -119,15 +121,15 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
 
     override open func didReceiveMemoryWarning () {}
     
-    // MARK: - Private Methods
     
-    func setupGL(_ context: EAGLContext) {
+    /// 画面遷移前（ViewDidLoadより前）にScanViewControllerから呼ばれる
+    /// - Parameter context: <#context description#>
+    func setup(context: EAGLContext, with mesh: STMesh) {
 
         (self.view as! EAGLView).context = context
-
         EAGLContext.setCurrent(context)
 
-        renderer.initializeGL(GLenum(GL_TEXTURE3))
+        self.rendererContext = self.renderer.initialize()
 
         self.eview.setFramebuffer()
         
@@ -151,17 +153,19 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         //        viewport[3] = Float(framebufferSize.height)
         
         // if you want full screen
-        viewport[0] = 0
-        viewport[1] = 0
-        viewport[2] = Float(framebufferSize.width)
-        viewport[3] = Float(framebufferSize.height)
+        self.viewport[0] = 0
+        self.viewport[1] = 0
+        self.viewport[2] = Float(framebufferSize.width)
+        self.viewport[3] = Float(framebufferSize.height)
+        
+        self.mesh = mesh
     }
     
+    // MARK: - Private Methods
     private func cleanup() {
         self.colorizer?.stopColorizing()
                 
-        self.renderer.releaseGLBuffers()
-        self.renderer.releaseGLTextures()
+        self.renderer.terminate(with: self.rendererContext)
         self.renderer = nil
         
         self.viewpointController = nil
@@ -221,7 +225,11 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
                     one.withMemoryRebound(to: GLfloat.self, capacity: 16, { (onePtr) -> () in
                         two.withMemoryRebound(to: GLfloat.self, capacity: 16, { (twoPtr) -> () in
                             
-                            renderer.render(onePtr,modelViewMatrix: twoPtr)
+                            renderer.render(
+                                with: self.rendererContext
+                                , projectionMatrix: onePtr
+                                , modelViewMatrix: twoPtr
+                            )
                         })
                     })
                 })
@@ -311,6 +319,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    
+    /// 画面遷移時のセットアップで呼ばれている
     internal func showColorRenderingMode() {
         os_log(.debug, log: OSLog.meshView, "ShowColorRenderingMode")
         
@@ -325,7 +335,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    func colorizeMesh() {
+    private func colorizeMesh() {
         os_log(.debug, log: OSLog.meshView, "Colorizing Mesh")
         
         let previewHandler = {
@@ -338,6 +348,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             self?.hideMeshViewerMessage()
         }
         
+        // colorizer は ScanViewController
         let _ = self.colorizer?.meshViewDidRequestColorizing(
             self.mesh!
             , previewCompletionHandler: previewHandler
