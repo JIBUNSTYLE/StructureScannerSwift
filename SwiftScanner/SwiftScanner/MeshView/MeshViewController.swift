@@ -38,7 +38,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             return _mesh
         }
         set {
-            
             if let _ = _mesh {
                 os_log(.debug, log: OSLog.meshView, "cleaned up the mesh")
                 _mesh = nil
@@ -47,27 +46,22 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             _mesh = newValue
             
             if _mesh != nil {
-                
                 os_log(.debug, log: OSLog.meshView, "Setting the mesh")
                 
-                self.renderer!.uploadMesh(_mesh!)
-                
+                self.renderer.uploadMesh(_mesh!)
                 self.trySwitchToColorRenderingMode()
-                
                 self.needsDisplay = true
             }
         }
     }
     
-    var projectionMatrix: GLKMatrix4 = GLKMatrix4Identity
-    {
+    var projectionMatrix: GLKMatrix4 = GLKMatrix4Identity {
         didSet {
             setCameraProjectionMatrix(projectionMatrix)
         }
     }
     
-    var volumeCenter = GLKVector3Make(0,0,0)
-    {
+    var volumeCenter = GLKVector3Make(0,0,0) {
         didSet {
             resetMeshCenter(volumeCenter)
         }
@@ -85,7 +79,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-
     }
     
     // MARK: - Lifecycle Methods
@@ -112,8 +105,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         displayLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
         self.displayLink = displayLink
         
-        viewpointController.reset()
-        viewpointController.initRotation(
+        self.viewpointController.reset()
+        self.viewpointController.initRotation(
             xAngleDegrees: InitialViewModelRotation.xAngleDegrees
             , yAngleDegrees: InitialViewModelRotation.yAngleDegrees
         )
@@ -212,7 +205,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             , GLint(self.viewport[3])
         )
         
-        let viewpointChanged = viewpointController.update()
+        let viewpointChanged = self.viewpointController.update()
         
         // If nothing changed, do not waste time and resources rendering.
         if !needsDisplay && !viewpointChanged { return }
@@ -307,9 +300,11 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         if mesh!.hasPerVertexUVTextureCoords() {
             os_log(.info, log: OSLog.meshView, "Setting rendermode textured")
             self.renderer.setRenderingMode(.textured)
+            
         } else if mesh!.hasPerVertexColors() {
             os_log(.info, log: OSLog.meshView, "Setting rendermode per vertex color")
             self.renderer.setRenderingMode(.perVertexColor)
+            
         } else {
             os_log(.info, log: OSLog.meshView, "Setting rendermode lighted gray")
             self.renderer.setRenderingMode(.lightedGray)
@@ -317,7 +312,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     internal func showColorRenderingMode() {
-        
         os_log(.debug, log: OSLog.meshView, "ShowColorRenderingMode")
         
         self.trySwitchToColorRenderingMode()

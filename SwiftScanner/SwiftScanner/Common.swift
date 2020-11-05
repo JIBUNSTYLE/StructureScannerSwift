@@ -8,6 +8,12 @@
 
 import Foundation
 
+struct InitialViewModelRotation {
+    static let xAngleDegrees: Float = 35.0
+    static let yAngleDegrees: Float = 50.0
+}
+
+
 /// See default initialization in: initializeDynamicOptions()
 struct DynamicOptions {
     

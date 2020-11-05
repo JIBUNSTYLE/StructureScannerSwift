@@ -39,7 +39,6 @@
 		85AAACE524883D4200C28132 /* MeshRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACE424883D4200C28132 /* MeshRenderer.swift */; };
 		85AAACE724883D4C00C28132 /* ViewPointController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACE624883D4C00C28132 /* ViewPointController.swift */; };
 		85AAACE924883D9900C28132 /* CustomShaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACE824883D9900C28132 /* CustomShaders.swift */; };
-		85AAACEB24883DEA00C28132 /* InitialViewModelRotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACEA24883DEA00C28132 /* InitialViewModelRotation.swift */; };
 		85AAACEE248A377900C28132 /* ScanBufferDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACED248A377900C28132 /* ScanBufferDelegate.swift */; };
 		85AAACF0248A41DC00C28132 /* ColorizeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAACEF248A41DC00C28132 /* ColorizeDelegate.swift */; };
 		85E12965248A52260036209E /* BatteryStatusUIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E12964248A52260036209E /* BatteryStatusUIStackView.swift */; };
@@ -110,7 +109,6 @@
 		85AAACE424883D4200C28132 /* MeshRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshRenderer.swift; sourceTree = "<group>"; };
 		85AAACE624883D4C00C28132 /* ViewPointController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPointController.swift; sourceTree = "<group>"; };
 		85AAACE824883D9900C28132 /* CustomShaders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomShaders.swift; sourceTree = "<group>"; };
-		85AAACEA24883DEA00C28132 /* InitialViewModelRotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewModelRotation.swift; sourceTree = "<group>"; };
 		85AAACED248A377900C28132 /* ScanBufferDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanBufferDelegate.swift; sourceTree = "<group>"; };
 		85AAACEF248A41DC00C28132 /* ColorizeDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorizeDelegate.swift; sourceTree = "<group>"; };
 		85E12964248A52260036209E /* BatteryStatusUIStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryStatusUIStackView.swift; sourceTree = "<group>"; };
@@ -241,7 +239,6 @@
 			isa = PBXGroup;
 			children = (
 				85AAACDE24883C8400C28132 /* MeshViewController.swift */,
-				85AAACEA24883DEA00C28132 /* InitialViewModelRotation.swift */,
 				85AAACE424883D4200C28132 /* MeshRenderer.swift */,
 				85AAACE824883D9900C28132 /* CustomShaders.swift */,
 				85AAACE624883D4C00C28132 /* ViewPointController.swift */,
@@ -369,7 +366,6 @@
 				85AAACD024882F4D00C28132 /* CaptureSessionError.swift in Sources */,
 				85AAACD824883B0000C28132 /* UIColorExtensions.swift in Sources */,
 				85AAACD6248839DA00C28132 /* ColorMapAnchor.swift in Sources */,
-				85AAACEB24883DEA00C28132 /* InitialViewModelRotation.swift in Sources */,
 				85E12967248A69420036209E /* BatteryStatusMonitor.swift in Sources */,
 				85AAACC02487A87D00C28132 /* OSLogExtensions.swift in Sources */,
 				70519B0A255248410031AC54 /* Constants.swift in Sources */,
