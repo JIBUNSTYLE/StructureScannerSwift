@@ -87,29 +87,36 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         super.init(coder: aDecoder)
 
     }
+    
+    // MARK: - Lifecycle Methods
 
     override open func viewDidLoad() {
-        
         super.viewDidLoad()
 
-        renderer = MeshRenderer()
-        
-        viewpointController = ViewpointController.init(screenSizeX: Float(self.view.frame.size.width), screenSizeY: Float(self.view.frame.size.height))
+        self.renderer = MeshRenderer()
+        self.viewpointController = ViewpointController(
+            screenSizeX: Float(self.view.frame.size.width)
+            , screenSizeY: Float(self.view.frame.size.height)
+        )
     }
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if displayLink != nil {
-            displayLink!.invalidate()
-            displayLink = nil
+        if let displayLink = self.displayLink {
+            displayLink.invalidate()
+            self.displayLink = nil
         }
         
-        displayLink = CADisplayLink(target: self, selector: #selector(MeshViewController.draw))
-        displayLink!.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+        let displayLink = CADisplayLink(target: self, selector: #selector(MeshViewController.draw))
+        displayLink.add(to: RunLoop.main, forMode: RunLoop.Mode.common)
+        self.displayLink = displayLink
         
         viewpointController.reset()
-        viewpointController.initRotation(xAngleDegrees: InitialViewModelRotation.xAngleDegrees, yAngleDegrees: InitialViewModelRotation.yAngleDegrees)
+        viewpointController.initRotation(
+            xAngleDegrees: InitialViewModelRotation.xAngleDegrees
+            , yAngleDegrees: InitialViewModelRotation.yAngleDegrees
+        )
     }
     
     // Make sure the status bar is disabled (iOS 7+)
@@ -117,17 +124,17 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         return true
     }
 
-    override open func didReceiveMemoryWarning () {
-        
-    }
+    override open func didReceiveMemoryWarning () {}
     
-    func setupGL (_ context: EAGLContext) {
+    // MARK: - Private Methods
+    
+    func setupGL(_ context: EAGLContext) {
 
         (self.view as! EAGLView).context = context
 
         EAGLContext.setCurrent(context)
 
-        renderer.initializeGL( GLenum(GL_TEXTURE3))
+        renderer.initializeGL(GLenum(GL_TEXTURE3))
 
         self.eview.setFramebuffer()
         
@@ -158,19 +165,18 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func cleanup() {
-        
         self.colorizer?.stopColorizing()
                 
-        renderer.releaseGLBuffers()
-        renderer.releaseGLTextures()
-        renderer = nil
+        self.renderer.releaseGLBuffers()
+        self.renderer.releaseGLTextures()
+        self.renderer = nil
         
-        viewpointController = nil
+        self.viewpointController = nil
         
-        displayLink!.invalidate()
-        displayLink = nil
+        self.displayLink?.invalidate()
+        self.displayLink = nil
         
-        mesh = nil
+        self.mesh = nil
 
         self.eview.context = nil
 
@@ -180,62 +186,65 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     //MARK: - MeshViewer setup when loading the mesh
     
     func setCameraProjectionMatrix (_ projection: GLKMatrix4) {
-
-        viewpointController.setCameraProjection(projection)
-        projectionMatrixBeforeUserInteractions = projection
+        self.viewpointController.setCameraProjection(projection)
+        self.projectionMatrixBeforeUserInteractions = projection
     }
     
     func resetMeshCenter (_ center: GLKVector3) {
-
-        viewpointController.reset()
-        viewpointController.initRotation(xAngleDegrees: InitialViewModelRotation.xAngleDegrees, yAngleDegrees: InitialViewModelRotation.yAngleDegrees)
-        viewpointController.setMeshCenter(center)
-        modelViewMatrixBeforeUserInteractions = viewpointController.currentGLModelViewMatrix()
+        self.viewpointController.reset()
+        self.viewpointController.initRotation(
+            xAngleDegrees: InitialViewModelRotation.xAngleDegrees
+            , yAngleDegrees: InitialViewModelRotation.yAngleDegrees
+        )
+        self.viewpointController.setMeshCenter(center)
+        self.modelViewMatrixBeforeUserInteractions = self.viewpointController.currentGLModelViewMatrix()
     }
 
-    //MARK: Rendering
+    // MARK: Rendering
     
     @objc func draw () {
-        
         self.eview.setFramebuffer()
         
-        glViewport(GLint(viewport[0]), GLint(viewport[1]), GLint(viewport[2]), GLint(viewport[3]))
+        glViewport(
+            GLint(self.viewport[0])
+            , GLint(self.viewport[1])
+            , GLint(self.viewport[2])
+            , GLint(self.viewport[3])
+        )
         
         let viewpointChanged = viewpointController.update()
         
         // If nothing changed, do not waste time and resources rendering.
-        if !needsDisplay && !viewpointChanged {
-            return
-        }
+        if !needsDisplay && !viewpointChanged { return }
         
-        var currentModelView = viewpointController.currentGLModelViewMatrix()
-        var currentProjection = viewpointController.currentGLProjectionMatrix()
+        var currentModelView = self.viewpointController.currentGLModelViewMatrix()
+        var currentProjection = self.viewpointController.currentGLProjectionMatrix()
         
-        renderer!.clear()
-        
-        withUnsafePointer(to: &currentProjection) { (one) -> () in
-            withUnsafePointer(to: &currentModelView, { (two) -> () in
-                
-                one.withMemoryRebound(to: GLfloat.self, capacity: 16, { (onePtr) -> () in
-                    two.withMemoryRebound(to: GLfloat.self, capacity: 16, { (twoPtr) -> () in
-                        
-                        renderer!.render(onePtr,modelViewMatrix: twoPtr)
+        if let renderer = self.renderer {
+            renderer.clear()
+            withUnsafePointer(to: &currentProjection) { (one) -> () in
+                withUnsafePointer(to: &currentModelView, { (two) -> () in
+                    
+                    one.withMemoryRebound(to: GLfloat.self, capacity: 16, { (onePtr) -> () in
+                        two.withMemoryRebound(to: GLfloat.self, capacity: 16, { (twoPtr) -> () in
+                            
+                            renderer.render(onePtr,modelViewMatrix: twoPtr)
+                        })
                     })
                 })
-            })
+            }
         }
-        
-        needsDisplay = false
+
+        self.needsDisplay = false
         
         let _ = self.eview.presentFramebuffer()
-
     }
     
-    //MARK: Touch & Gesture Control
+    // MARK: - Touch & Gesture Control
     
     @IBAction func tapGesture(_ sender: UITapGestureRecognizer) {
         if sender.state == .ended {
-            viewpointController.onTouchBegan()
+            self.viewpointController.onTouchBegan()
         }
     }
     
@@ -243,36 +252,30 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
 
         // Forward to the ViewpointController.
         if sender.state == .began {
-            viewpointController.onPinchGestureBegan(Float(sender.scale))
-        }
-        else if sender.state == .changed {
-            viewpointController.onPinchGestureChanged(Float(sender.scale))
+            self.viewpointController.onPinchGestureBegan(Float(sender.scale))
+        } else if sender.state == .changed {
+            self.viewpointController.onPinchGestureChanged(Float(sender.scale))
         }
     }
     
     @IBAction func oneFingerPanGesture(_ sender: UIPanGestureRecognizer) {
-
         let touchPos = sender.location(in: view)
         let touchVel = sender.velocity(in: view)
         let touchPosVec = GLKVector2Make(Float(touchPos.x), Float(touchPos.y))
         let touchVelVec = GLKVector2Make(Float(touchVel.x), Float(touchVel.y))
         
         if sender.state == .began {
-            viewpointController.onOneFingerPanBegan(touchPosVec)
-        }
-        else if sender.state == .changed {
-            viewpointController.onOneFingerPanChanged(touchPosVec)
-        }
-        else if sender.state == .ended {
-            viewpointController.onOneFingerPanEnded(touchVelVec)
+            self.viewpointController.onOneFingerPanBegan(touchPosVec)
+        } else if sender.state == .changed {
+            self.viewpointController.onOneFingerPanChanged(touchPosVec)
+        } else if sender.state == .ended {
+            self.viewpointController.onOneFingerPanEnded(touchVelVec)
         }
     }
 
     @IBAction func twoFingersPanGesture(_ sender: AnyObject) {
 
-        if sender.numberOfTouches != 2 {
-            return
-        }
+        guard sender.numberOfTouches == 2 else { return }
         
         let touchPos = sender.location(in: view)
         let touchVel = sender.velocity(in: view)
@@ -280,21 +283,19 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         let touchVelVec = GLKVector2Make(Float(touchVel.x), Float(touchVel.y))
         
         if sender.state == .began {
-            viewpointController.onTwoFingersPanBegan(touchPosVec)
-        }
-        else if sender.state == .changed {
-            viewpointController.onTwoFingersPanChanged(touchPosVec)
-        }
-        else if sender.state == .ended {
-            viewpointController.onTwoFingersPanEnded(touchVelVec)
+            self.viewpointController.onTwoFingersPanBegan(touchPosVec)
+        } else if sender.state == .changed {
+            self.viewpointController.onTwoFingersPanChanged(touchPosVec)
+        } else if sender.state == .ended {
+            self.viewpointController.onTwoFingersPanEnded(touchVelVec)
         }
     }
     
     @IBAction func resetView(_ sender: UIButton) {
-        viewpointController.resetView()
+        self.viewpointController.resetView()
     }
     
-    //MARK: UI Control
+    // MARK: - UI Control
     
     private func trySwitchToColorRenderingMode() {
    
@@ -303,20 +304,15 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         // switch the render mode to color, as long as the user has not changed
         // the selector.
         
-        if    mesh!.hasPerVertexUVTextureCoords() {
-            
+        if mesh!.hasPerVertexUVTextureCoords() {
             os_log(.info, log: OSLog.meshView, "Setting rendermode textured")
-            renderer.setRenderingMode(.textured)
-        }
-        else if mesh!.hasPerVertexColors() {
-            
+            self.renderer.setRenderingMode(.textured)
+        } else if mesh!.hasPerVertexColors() {
             os_log(.info, log: OSLog.meshView, "Setting rendermode per vertex color")
-            renderer.setRenderingMode(.perVertexColor)
-        }
-        else {
-            
+            self.renderer.setRenderingMode(.perVertexColor)
+        } else {
             os_log(.info, log: OSLog.meshView, "Setting rendermode lighted gray")
-            renderer.setRenderingMode(.lightedGray)
+            self.renderer.setRenderingMode(.lightedGray)
         }
     }
     
@@ -324,15 +320,14 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         
         os_log(.debug, log: OSLog.meshView, "ShowColorRenderingMode")
         
-        trySwitchToColorRenderingMode()
+        self.trySwitchToColorRenderingMode()
         
-        let meshIsColorized: Bool = mesh!.hasPerVertexColors() || mesh!.hasPerVertexUVTextureCoords()
+        let meshIsColorized: Bool = self.mesh!.hasPerVertexColors() || self.mesh!.hasPerVertexUVTextureCoords()
         
         os_log(.debug, log: OSLog.meshView, "Mesh is colorized = %{Public}@", String(describing: meshIsColorized))
         
         if !meshIsColorized {
-            
-            colorizeMesh()
+            self.colorizeMesh()
         }
     }
     
@@ -349,28 +344,28 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             self?.hideMeshViewerMessage()
         }
         
-        let _ = self.colorizer?.meshViewDidRequestColorizing(self.mesh!,
-                                                       previewCompletionHandler: previewHandler,
-                                                       enhancedCompletionHandler: completionHandler)
+        let _ = self.colorizer?.meshViewDidRequestColorizing(
+            self.mesh!
+            , previewCompletionHandler: previewHandler
+            , enhancedCompletionHandler: completionHandler
+        )
     }
         
     func hideMeshViewerMessage() {
-        
-        UIView.animate(withDuration: 0.5, animations: {
-            self.meshViewerMessageLabel.alpha = 0.0
-            }, completion: { _ in
+        UIView.animate(
+            withDuration: 0.5
+            , animations: { self.meshViewerMessageLabel.alpha = 0.0 }
+            , completion: { _ in
                 self.meshViewerMessageLabel.isHidden = true
-        })
+            })
     }
     
     func showMeshViewerMessage(_ msg: String) {
+        self.meshViewerMessageLabel.text = msg
         
-        meshViewerMessageLabel.text = msg
-        
-        if meshViewerMessageLabel.isHidden == true {
-            
-            meshViewerMessageLabel.alpha = 0.0
-            meshViewerMessageLabel.isHidden = false
+        if self.meshViewerMessageLabel.isHidden == true {
+            self.meshViewerMessageLabel.alpha = 0.0
+            self.meshViewerMessageLabel.isHidden = false
             
             UIView.animate(withDuration: 0.5, animations: {
                 self.meshViewerMessageLabel.alpha = 1.0
@@ -378,7 +373,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    //MARK: Navigation
+    // MARK: - Navigation
+    
     open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
@@ -398,7 +394,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         default:
             return
         }
-
     }
 }
 
