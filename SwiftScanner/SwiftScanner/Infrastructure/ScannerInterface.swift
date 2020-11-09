@@ -29,7 +29,7 @@ protocol ScannerInterface {
     
     func restartFromCubePlacing()
     
-    func finishModeling() throws -> STMesh
+    func finishModeling() throws -> String
     
     func terminate()
 }

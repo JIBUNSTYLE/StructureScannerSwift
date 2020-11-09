@@ -59,8 +59,6 @@ class ScanViewController: UIViewController {
  
     weak var scanBuffer : ScanBufferDelegate?
     
-    var mesh : STMesh? = nil
-    
     var cancellables = [AnyCancellable]()
     
     // DONE: ステータスバー
@@ -212,11 +210,6 @@ class ScanViewController: UIViewController {
     
     // MARK - User Action
 
-
-    // DOING: enterViewingState()から呼ばれている
-    func presentMeshViewer(_ mesh: STMesh) {
-        performSegue(withIdentifier: "ShowMeshSegue", sender: mesh)
-    }
     
     // DOING: prepare（遷移時）で呼ばれる
     // ayameではSceneKit画面に行くので必要ない？
@@ -225,8 +218,6 @@ class ScanViewController: UIViewController {
     
     // TODO
     func setupMeshViewController(meshViewController: MeshViewController, mesh: STMesh) {
-
-        self.meshViewController = meshViewController
         
         meshViewController.scanView = self
         meshViewController.scanBuffer = self.scanBuffer // MainVCにmeshを渡すのに使っている（ネーミング意味不）
@@ -259,12 +250,15 @@ class ScanViewController: UIViewController {
         
         if sampleCount > 0 {
             volumeCenter = GLKVector3DivideScalar(volumeCenter, Float(sampleCount))
-//        } else {
+        } else {
+            // TODO
 //            volumeCenter = GLKVector3MultiplyScalar(_slamState.volumeSizeInMeters, 0.5)
         }
         
         meshViewController.resetMeshCenter(volumeCenter)
         meshViewController.showColorRenderingMode()
+        
+        self.meshViewController = meshViewController
     }
 
     // DONE: viewDidLoad/setupSLAM（viewDidLoad/onSLAMOptionsChanged）/resetSLAM(onSLAMOptionsChanged/resetButton/unwind/cleanup)で呼ばれる
@@ -319,29 +313,51 @@ class ScanViewController: UIViewController {
     // DONE: doneButtonPressed/memoryWarningで呼ばれる
     // 状態変更：画面遷移
     private func enterViewingState() {
-        // TODO
-        self.mesh = try! Implementations.shared.scanner.finishModeling()
-        presentMeshViewer(self.mesh!)
+        os_log("Preparing for ShowMeshSegue", log: OSLog.meshView, type: .debug)
+      
+//        let mesh = try! Implementations.shared.scanner.finishModeling()
+        
+//        let storyboard = UIStoryboard(name: "Mesh", bundle: self.nibBundle)
+//        guard let meshViewController = storyboard.instantiateInitialViewController() as? MeshViewController else {
+//            fatalError()
+//        }
+//
+//        self.setupMeshViewController(meshViewController: meshViewController, mesh: mesh)
+//        self.present(meshViewController, animated: true, completion: nil)
+        
+        let fileURL = try! Implementations.shared.scanner.finishModeling()
+        
+        let storyboard = UIStoryboard(name: "Mesh2", bundle: self.nibBundle)
+        guard let mesh2ViewController = storyboard.instantiateInitialViewController() as? Mesh2ViewController else {
+            fatalError()
+        }
+
+        mesh2ViewController.set(file: fileURL)
+        self.present(mesh2ViewController, animated: true, completion: nil)
+
         self.state = .viewing
-        updateIdleTimer()
+        self.updateIdleTimer()
+        
+        Implementations.shared.scanner.terminate()
     }
 
     //MARK: -  Structure Sensor Management
     
 
-    //MARK: - UI Callbacks
+    // MARK: - User Actions
     
-    // DONE: 設定画面で使うが、このサンプルはそこまで書いていない
-//    func onSLAMOptionsChanged() {
-//
-//        // A full reset to force a creation of a new tracker.
-//        resetSLAM()
-//        clearSLAM()
-//        setupSLAM()
-//
-//        // Restore the volume size cleared by the full reset.
-//        adjustVolumeSize( volumeSize: _slamState.volumeSizeInMeters)
-//    }
+    
+    @IBAction func backButtonDidPush(_ sender: UIButton) {
+        os_log("unwinding segue unwindMeshToScanView", log: OSLog.meshView, type: .debug)
+        
+        if self.meshViewController != nil {
+            self.meshViewController = nil
+        }
+        _appStatus.statusMessageDisabled = false
+//            updateAppStatusMessage()
+        
+        self.dismiss(animated: true, completion: nil)
+    }
 
     
     // DONE:
@@ -391,10 +407,22 @@ class ScanViewController: UIViewController {
 
     // DONE:
     @IBAction func doneButtonPressed(_ sender: UIButton) {
-        // TODO finishModeling
-//        stopScanning()
-        enterViewingState()
+        self.enterViewingState()
     }
+    
+    // MARK: -
+    
+    // DONE: 設定画面で使うが、このサンプルはそこまで書いていない
+//    func onSLAMOptionsChanged() {
+//
+//        // A full reset to force a creation of a new tracker.
+//        resetSLAM()
+//        clearSLAM()
+//        setupSLAM()
+//
+//        // Restore the volume size cleared by the full reset.
+//        adjustVolumeSize( volumeSize: _slamState.volumeSizeInMeters)
+//    }
     
 //    func isStructureConnected() -> Bool {
 //
@@ -768,46 +796,6 @@ class ScanViewController: UIViewController {
         }
     }
     
-    //MARK: Navigation
-    @IBAction func unwindToScanView(segue: UIStoryboardSegue) {
-
-        switch segue.identifier ?? "" {
-        case "unwindMeshToScanView":
-            os_log("unwinding segue unwindMeshToScanView", log: OSLog.meshView, type: .debug)
-            
-            if self.meshViewController != nil {
-                self.meshViewController = nil
-            }
-            _appStatus.statusMessageDisabled = false
-//            updateAppStatusMessage()
-
-        default:
-            return
-        }
-       }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        switch segue.identifier ?? "" {
-        case "ShowMeshSegue":
-            os_log("Preparing for ShowMeshSegue", log: OSLog.meshView, type: .debug)
-            
-            guard let meshViewController = segue.destination as? MeshViewController else {
-                fatalError("Unexpected destination: \(segue.destination)")
-            }
-
-            guard let mesh = sender as? STMesh else {
-                fatalError("Cannot convert segue sender to mesh")
-            }
-
-            setupMeshViewController(meshViewController: meshViewController, mesh: mesh)
-                
-        default:
-            return
-        }
-        
-    }
 }
 
 // MARK: - STBackgroundTaskDelegate プロトコルの実装
@@ -932,8 +920,6 @@ extension ScanViewController : ScanViewDelegate {
         }
 
 //        _captureSession?.delegate = nil
-        
-        self.mesh = nil
                 
         os_log(.debug, log:OSLog.scanning, "ViewController dismissed")
     }

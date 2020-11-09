@@ -25,6 +25,11 @@ class MainViewController: UIViewController {
         self.scanMessageLabel.text = NSLocalizedString("NO_SCANS_COLLECTED_YET", comment: "")
         self.sendButton.isHidden = true
         self.deleteScansButton.isHidden = true
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.batteryStatusControl.start()
     }
     
@@ -47,40 +52,31 @@ class MainViewController: UIViewController {
     }
     
     @objc func applicationWillTerminate(notification: Notification) {
-      deleteAllFiles()
+        deleteAllFiles()
     }
 
     deinit {
-      NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
-    //MARK: Navigation
-        
-    @IBAction func unwindToMainView(segue: UIStoryboardSegue) {
-        self.batteryStatusControl.start()
-    }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
+    //MARK: - User Actions
+    
+    @IBAction func newScanButonDidPush(_ sender: UIButton) {
+        os_log("Preparing for NewScanSegue", log: OSLog.application, type: .debug)
         
-        switch segue.identifier ?? "" {
-        case "NewScanSegue":
-            os_log("Preparing for NewScanSegue", log: OSLog.application, type: .debug)
-            
-            guard let scanViewController = segue.destination as? ScanViewController else {
-                fatalError("Unexpected destination: \(segue.destination)")
-            }
-
-            self.batteryStatusControl.stop()
-
-            scanViewController.scanBuffer = self
-                
-        default:
-            return
+        let storyboard = UIStoryboard(name: "Scan", bundle: self.nibBundle)
+        guard let scanViewController = storyboard.instantiateInitialViewController() as? ScanViewController else {
+            fatalError()
         }
+        
+        self.batteryStatusControl.stop()
+
+        scanViewController.scanBuffer = self
+        scanViewController.modalPresentationStyle = .fullScreen
+        self.present(scanViewController, animated: true, completion: nil)
     }
     
-    //MARK: - UI Callbacks
     
     @IBAction func sendButtonPressed(_ sender: UIButton) {
         
@@ -88,7 +84,7 @@ class MainViewController: UIViewController {
         
         var fileURLs = [Any]()
         for (index, mesh) in self.meshes.enumerated() {
-            let fileName = String.init(format: "SCAN%03d.ZIP", index)
+            let fileName = String(format: "SCAN%03d.ZIP", index)
             guard let fileResult = saveMesh(mesh: mesh, fileName: fileName) else {
                 os_log(.error, log: OSLog.application, "Error creating file: %{Public}@", fileName)
                 continue
@@ -180,10 +176,10 @@ extension MainViewController {
     }
     
     private func getDocumentsDirectory() -> NSString {
-           let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-           let documentsDirectory = paths[0]
-           return documentsDirectory as NSString
-       }
+       let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+       let documentsDirectory = paths[0]
+       return documentsDirectory as NSString
+   }
 }
 
 extension MainViewController : ScanBufferDelegate {
@@ -194,7 +190,7 @@ extension MainViewController : ScanBufferDelegate {
         self.sendButton.isHidden = self.meshes.count < 1
         self.deleteScansButton.isHidden = self.meshes.count < 1
         let messageStringFormat = NSLocalizedString("COLLECTED__0__SCANS", comment: "")
-        let message = String.init(format: messageStringFormat, self.meshes.count)
+        let message = String(format: messageStringFormat, self.meshes.count)
         self.scanMessageLabel.text = message
     }
 }

@@ -306,17 +306,17 @@ class StructureService : NSObject, ScannerInterface {
     }
     
     /// モデリングを終了します。
-    func finishModeling() throws -> STMesh {
+    func finishModeling() throws -> String {
         
         guard case .scanning(
             let scene
-            , let tracker
-            , let cameraPoseInitializer
-            , let cubeRenderer
-            , let keyFrameManager
-            , let depthAsRgbaVisualizer
+            , _ // let tracker
+            , _ // let cameraPoseInitializer
+            , _ // let cubeRenderer
+            , _ // let keyFrameManager
+            , _ // let depthAsRgbaVisualizer
             , let mapper
-            , let volumeSizeInMeters
+            , _ // let volumeSizeInMeters
         ) = self.scannerContext
             , case .initialized(let session) = self.captureSessionContext else { fatalError() }
         
@@ -345,14 +345,15 @@ class StructureService : NSObject, ScannerInterface {
         
         self.scannerContext = .completed(mesh: mesh)
         
-        return mesh
+        // ファイルに保存
+        return try self.save(mesh)
     }
     
     func terminate() {
         if case .initialized(
             _ // let layer
             , let context
-            , _ // let buffers
+            , let buffers
             , _ // let viewport
             , _ // let yCbCrTextureShader
             , _ // let rgbaTextureShader
@@ -361,6 +362,7 @@ class StructureService : NSObject, ScannerInterface {
         ) = self.graphicContext
               , EAGLContext.current() == context {
             EAGLContext.setCurrent(nil)
+            self.delete(buffers)
         }
         
         if case .initialized(let session) = self.captureSessionContext {
@@ -371,6 +373,51 @@ class StructureService : NSObject, ScannerInterface {
         self.resetScanner(context: self.scannerContext)
     }
     
+}
+
+extension StructureService {
+    
+    private func save(_ mesh: STMesh) throws -> String {
+        let filename = "dummy.zip"// "\(UUID().uuidString).zip"
+        let fileManager = FileManager.default
+//        let documentsDir = try fileManager.url(
+//            for: .documentDirectory
+//            , in: .userDomainMask
+//            , appropriateFor: nil
+//            , create: true)
+        
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let documentsDir = paths[0]
+        
+        // 列挙
+        do {
+            let files_before = try fileManager.contentsOfDirectory(atPath: documentsDir)
+            files_before.forEach { f in
+                log("file: \(f)")
+            }
+        } catch let error {
+            log("ERROR: \(error)")
+        }
+        
+        let filepath = (documentsDir as NSString).appendingPathComponent(filename)
+        
+        if fileManager.fileExists(atPath: filepath) {
+            try fileManager.removeItem(atPath: filepath)
+        }
+        
+        let options: [AnyHashable: Any] = [
+            kSTMeshWriteOptionFileFormatKey : STMeshWriteOptionFileFormat.objFileZip.rawValue
+        ]
+        try mesh.write(toFile: filepath, options: options)
+        
+        // 列挙
+        let files_after = try! fileManager.contentsOfDirectory(atPath: documentsDir)
+        files_after.forEach { f in
+            log("file: \(f)")
+        }
+        
+        return filepath
+    }
 }
 
 // MARK: - private for OpenGL
@@ -503,6 +550,23 @@ extension StructureService {
             , depthAsRgbaTexture: depthAsRgbaTexture
             , videoTextureCache: videoTextureCache
         )
+    }
+    
+    private func delete(_ buffers: Buffers) {
+        if buffers.frameBuffer != 0 {
+            var frameBuffer = buffers.frameBuffer
+            glDeleteFramebuffers(1, &frameBuffer)
+        }
+        
+        if buffers.depthRenderBuffer != 0 {
+            var depthRenderBuffer = buffers.depthRenderBuffer
+            glDeleteFramebuffers(1, &depthRenderBuffer)
+        }
+        
+        if buffers.colorRenderBuffer != 0 {
+            var colorRenderBuffer = buffers.colorRenderBuffer
+            glDeleteFramebuffers(1, &colorRenderBuffer)
+        }
     }
     
     /// 深度フレームセンサのサンプルが出力された際の描画を行います。STCaptureSessionDelegateプロトコルの実装で呼ばれます。

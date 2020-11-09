@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="MMy-Br-dSm">
+    <device id="ipad10_2" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Scan View Controller-->
+        <scene sceneID="oVx-hk-oJ6">
+            <objects>
+                <viewController id="MMy-Br-dSm" userLabel="Scan View Controller" customClass="ScanViewController" customModule="SwiftScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="YvL-69-eGP" userLabel="Eview" customClass="EAGLView" customModule="SwiftScanner" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5rJ-d0-nyz" userLabel="Button - Back">
+                                <rect key="frame" x="50" y="381" width="65" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="backButtonDidPush:" destination="MMy-Br-dSm" eventType="touchUpInside" id="bEQ-dJ-B59"/>
+                                    <segue destination="up7-JV-fo9" kind="unwind" identifier="unwindScanToMainView" unwindAction="unwindToMainViewWithSegue:" id="hYc-iZ-NzH"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gYN-4o-NUS" userLabel="Button - Scan">
+                                <rect key="frame" x="964" y="381" width="66" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Scan"/>
+                                <connections>
+                                    <action selector="scanButtonPressed:" destination="MMy-Br-dSm" eventType="touchUpInside" id="hOf-QM-b1R"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tlz-D3-Y0S" userLabel="Button - Reset">
+                                <rect key="frame" x="956" y="481" width="74" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="resetButtonPressed:" destination="MMy-Br-dSm" eventType="touchUpInside" id="UJT-q5-N9o"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0av-3K-Uxy" userLabel="Button - Done">
+                                <rect key="frame" x="960" y="381" width="70" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Done"/>
+                                <connections>
+                                    <action selector="doneButtonPressed:" destination="MMy-Br-dSm" eventType="touchUpInside" id="OFH-00-yEb"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Structure Sensor" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n5R-p9-oOx" userLabel="Label - App Status Message">
+                                <rect key="frame" x="411" y="383.5" width="258" height="43"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
+                                <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tracking Lost. Try to re-align or press reset." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l2k-DN-fhh" userLabel="Label - Tracking Lost">
+                                <rect key="frame" x="214" y="717" width="652.5" height="43"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Distance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eUE-8d-dww" userLabel="Label - Distance">
+                                <rect key="frame" x="450" y="563" width="180" height="54"/>
+                                <color key="backgroundColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="54" id="7ZU-AR-p0W"/>
+                                    <constraint firstAttribute="width" constant="180" id="WAd-6Q-b6e"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="yVI-br-Tri" userLabel="Stack View - Battery Status">
+                                <rect key="frame" x="970" y="762" width="100" height="38"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SensorBatteryLow" translatesAutoresizingMaskIntoConstraints="NO" id="L5y-8o-c3e" userLabel="Image - SensorBatteryLow">
+                                        <rect key="frame" x="0.0" y="0.0" width="100" height="26"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="XqJ-kh-Xl7"/>
+                                            <constraint firstAttribute="height" constant="26" id="zB0-dh-1fF"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sensor Battery" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uHX-tT-3p3" userLabel="Label - Sensor Battery">
+                                        <rect key="frame" x="0.0" y="26" width="100" height="12"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="L5y-8o-c3e" firstAttribute="centerX" secondItem="yVI-br-Tri" secondAttribute="centerX" id="E78-nE-NIq"/>
+                                    <constraint firstItem="uHX-tT-3p3" firstAttribute="centerX" secondItem="yVI-br-Tri" secondAttribute="centerX" id="eIN-KD-QyU"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="WkM-9N-XEv"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="l2k-DN-fhh" firstAttribute="centerX" secondItem="YvL-69-eGP" secondAttribute="centerX" id="7aQ-TS-MSJ"/>
+                            <constraint firstItem="5rJ-d0-nyz" firstAttribute="leading" secondItem="WkM-9N-XEv" secondAttribute="leading" constant="50" id="B1z-ij-QG8"/>
+                            <constraint firstItem="Tlz-D3-Y0S" firstAttribute="centerY" secondItem="YvL-69-eGP" secondAttribute="centerY" constant="100" id="D9E-1a-wAH"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="trailing" secondItem="gYN-4o-NUS" secondAttribute="trailing" constant="50" id="FBb-Qp-aBq"/>
+                            <constraint firstItem="0av-3K-Uxy" firstAttribute="centerY" secondItem="YvL-69-eGP" secondAttribute="centerY" id="MdV-iL-Zdw"/>
+                            <constraint firstItem="n5R-p9-oOx" firstAttribute="centerY" secondItem="YvL-69-eGP" secondAttribute="centerY" id="N7Y-TD-4b4"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="bottom" secondItem="yVI-br-Tri" secondAttribute="bottom" constant="10" id="NAU-te-imM"/>
+                            <constraint firstItem="gYN-4o-NUS" firstAttribute="centerY" secondItem="YvL-69-eGP" secondAttribute="centerY" id="QFt-op-1sx"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="trailing" secondItem="yVI-br-Tri" secondAttribute="trailing" constant="10" id="c0u-jl-JeZ"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="trailing" secondItem="0av-3K-Uxy" secondAttribute="trailing" constant="50" id="eWK-vg-umS"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="bottom" secondItem="l2k-DN-fhh" secondAttribute="bottom" constant="50" id="i82-Ln-cJK"/>
+                            <constraint firstItem="eUE-8d-dww" firstAttribute="centerX" secondItem="YvL-69-eGP" secondAttribute="centerX" id="rVZ-MP-g8I"/>
+                            <constraint firstItem="WkM-9N-XEv" firstAttribute="trailing" secondItem="Tlz-D3-Y0S" secondAttribute="trailing" constant="50" id="rW9-DO-0fP"/>
+                            <constraint firstItem="n5R-p9-oOx" firstAttribute="centerX" secondItem="YvL-69-eGP" secondAttribute="centerX" id="sUe-nQ-SVV"/>
+                            <constraint firstItem="l2k-DN-fhh" firstAttribute="top" secondItem="eUE-8d-dww" secondAttribute="bottom" constant="100" id="tdB-r6-Pz9"/>
+                            <constraint firstItem="5rJ-d0-nyz" firstAttribute="centerY" secondItem="YvL-69-eGP" secondAttribute="centerY" id="xcB-a8-mM3"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="jss-6j-lAF" appends="YES" id="dEP-5S-7ZG"/>
+                        </connections>
+                    </view>
+                    <navigationItem key="navigationItem" id="IXQ-Bg-rP8"/>
+                    <connections>
+                        <outlet property="appStatusMessageLabel" destination="n5R-p9-oOx" id="buJ-9F-d9B"/>
+                        <outlet property="backButton" destination="5rJ-d0-nyz" id="fdn-kg-lzF"/>
+                        <outlet property="batteryLabel" destination="uHX-tT-3p3" id="Mwd-Qf-J5r"/>
+                        <outlet property="distanceLabel" destination="eUE-8d-dww" id="CSN-Sl-Rmv"/>
+                        <outlet property="doneButton" destination="0av-3K-Uxy" id="5Ke-Ss-1Cx"/>
+                        <outlet property="eview" destination="YvL-69-eGP" id="ADc-Hz-1ra"/>
+                        <outlet property="resetButton" destination="Tlz-D3-Y0S" id="fPi-RM-tGa"/>
+                        <outlet property="scanButton" destination="gYN-4o-NUS" id="2WK-oB-IN5"/>
+                        <outlet property="sensorBatteryLowImage" destination="L5y-8o-c3e" id="nLI-5i-rqx"/>
+                        <outlet property="trackingLostLabel" destination="l2k-DN-fhh" id="iy6-wW-iqq"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MjK-Ta-3fB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="up7-JV-fo9" userLabel="Exit" sceneMemberID="exit"/>
+                <pinchGestureRecognizer id="jss-6j-lAF">
+                    <connections>
+                        <action selector="pinchGesture:" destination="MMy-Br-dSm" id="dTx-Ip-3Sl"/>
+                    </connections>
+                </pinchGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="833" y="109"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="SensorBatteryLow" width="270" height="68"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

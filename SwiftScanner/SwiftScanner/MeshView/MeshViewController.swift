@@ -78,10 +78,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     var projectionMatrixBeforeUserInteractions: GLKMatrix4?
     
     var rendererContext: RendererContext = .unknown
-        
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+    
     
     // MARK: - Lifecycle Methods
 
@@ -131,7 +128,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
 
         self.rendererContext = self.renderer.initialize()
 
-        self.eview.setFramebuffer()
+        // TODO
+//        self.eview.setFramebuffer()
         
         let framebufferSize: CGSize = self.eview.getFramebufferSize()
         
@@ -160,6 +158,32 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         
         self.mesh = mesh
     }
+    
+    // MARK: - User Actions
+    
+    @IBAction func backButtonDidPush(_ sender: UIButton) {
+        os_log("Preparing for unwindMeshToScanView", log: OSLog.meshView, type: .debug)
+        self.cleanup()
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    @IBAction func resetButtonDidPush(_ sender: UIButton) {
+        self.viewpointController.resetView()
+    }
+    
+    @IBAction func acceptButtonDidPush(_ sender: Any) {
+        os_log("Preparing for unwindMeshToMainView", log: OSLog.meshView, type: .debug)
+        if let mesh = self.mesh {
+            self.scanBuffer?.addScan(mesh)
+        }
+        self.cleanup()
+        self.scanView?.cleanup()
+        
+        self.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
     
     // MARK: - Private Methods
     private func cleanup() {
@@ -200,7 +224,8 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
     // MARK: Rendering
     
     @objc func draw () {
-        self.eview.setFramebuffer()
+        // TODO
+//        self.eview.setFramebuffer()
         
         glViewport(
             GLint(self.viewport[0])
@@ -292,9 +317,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    @IBAction func resetView(_ sender: UIButton) {
-        self.viewpointController.resetView()
-    }
     
     // MARK: - UI Control
     
@@ -375,29 +397,6 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
             UIView.animate(withDuration: 0.5, animations: {
                 self.meshViewerMessageLabel.alpha = 1.0
             })
-        }
-    }
-    
-    // MARK: - Navigation
-    
-    open override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        switch segue.identifier ?? "" {
-        case "unwindMeshToScanView":
-            os_log("Preparing for unwindMeshToScanView", log: OSLog.meshView, type: .debug)
-            self.cleanup()
-                            
-        case "unwindMeshToMainView":
-            os_log("Preparing for unwindMeshToMainView", log: OSLog.meshView, type: .debug)
-            if let mesh = self.mesh {
-                self.scanBuffer?.addScan(mesh)
-            }
-            self.cleanup()
-            self.scanView?.cleanup()            
-
-        default:
-            return
         }
     }
 }

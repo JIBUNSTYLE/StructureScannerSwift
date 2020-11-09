@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="enQ-eQ-rbE">
+    <device id="ipad10_2" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Mesh View Controller-->
+        <scene sceneID="Z47-Bl-qqu">
+            <objects>
+                <viewController id="enQ-eQ-rbE" userLabel="Mesh View Controller" customClass="MeshViewController" customModule="SwiftScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="V3D-Mr-IaQ" userLabel="EView" customClass="EAGLView" customModule="SwiftScanner" customModuleProvider="target">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rT8-XA-Qbt">
+                                <rect key="frame" x="50" y="381" width="65" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="backButtonDidPush:" destination="enQ-eQ-rbE" eventType="touchUpInside" id="boK-8O-LZR"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wUX-sw-g1V">
+                                <rect key="frame" x="45.5" y="479" width="74" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="resetButtonDidPush:" destination="enQ-eQ-rbE" eventType="touchUpInside" id="dfw-0E-9aG"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hy6-hE-Mog">
+                                <rect key="frame" x="937" y="381" width="93" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Accept"/>
+                                <connections>
+                                    <action selector="acceptButtonDidPush:" destination="enQ-eQ-rbE" eventType="touchUpInside" id="3qd-iC-5bj"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Colorizing..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bkV-qE-uyY" userLabel="Label - Structure Message">
+                                <rect key="frame" x="390" y="367.5" width="300" height="75"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="75" id="8kt-ac-3T8"/>
+                                    <constraint firstAttribute="width" constant="300" id="XAl-vA-k2g"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="36"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ktF-qA-SOs"/>
+                        <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="ktF-qA-SOs" firstAttribute="trailing" secondItem="hy6-hE-Mog" secondAttribute="trailing" constant="50" id="80D-0t-0I4"/>
+                            <constraint firstItem="rT8-XA-Qbt" firstAttribute="leading" secondItem="ktF-qA-SOs" secondAttribute="leading" constant="50" id="BwA-ca-gm9"/>
+                            <constraint firstItem="bkV-qE-uyY" firstAttribute="centerY" secondItem="V3D-Mr-IaQ" secondAttribute="centerY" id="Uzy-wH-dUe"/>
+                            <constraint firstItem="bkV-qE-uyY" firstAttribute="centerX" secondItem="V3D-Mr-IaQ" secondAttribute="centerX" id="Vgb-7a-LL1"/>
+                            <constraint firstItem="rT8-XA-Qbt" firstAttribute="centerY" secondItem="V3D-Mr-IaQ" secondAttribute="centerY" id="etc-nM-3eZ"/>
+                            <constraint firstItem="wUX-sw-g1V" firstAttribute="top" secondItem="rT8-XA-Qbt" secondAttribute="bottom" constant="50" id="gSy-Qx-5je"/>
+                            <constraint firstItem="wUX-sw-g1V" firstAttribute="centerX" secondItem="rT8-XA-Qbt" secondAttribute="centerX" id="q4o-Ob-1L5"/>
+                            <constraint firstItem="hy6-hE-Mog" firstAttribute="centerY" secondItem="V3D-Mr-IaQ" secondAttribute="centerY" id="rmS-Fu-n1X"/>
+                        </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="uVh-ER-3dB" appends="YES" id="WJN-NN-SBK"/>
+                            <outletCollection property="gestureRecognizers" destination="kga-9U-vYM" appends="YES" id="pVx-CV-xVO"/>
+                            <outletCollection property="gestureRecognizers" destination="uBd-GH-KSq" appends="YES" id="xVc-1k-Crk"/>
+                            <outletCollection property="gestureRecognizers" destination="Snd-4o-9vR" appends="YES" id="Gdl-2M-gpx"/>
+                        </connections>
+                    </view>
+                    <connections>
+                        <outlet property="eview" destination="V3D-Mr-IaQ" id="rhU-tI-2Ne"/>
+                        <outlet property="meshViewerMessageLabel" destination="bkV-qE-uyY" id="KBa-kI-oZ4"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JAv-VD-Xzm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="uVh-ER-3dB" userLabel="One Finger Pan">
+                    <connections>
+                        <action selector="oneFingerPanGesture:" destination="enQ-eQ-rbE" id="Nzp-Lj-DqX"/>
+                    </connections>
+                </panGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="2" maximumNumberOfTouches="2" id="kga-9U-vYM" userLabel="Two Finger Pan">
+                    <connections>
+                        <action selector="twoFingersPanGesture:" destination="enQ-eQ-rbE" id="kih-dS-bvh"/>
+                    </connections>
+                </panGestureRecognizer>
+                <pinchGestureRecognizer id="uBd-GH-KSq">
+                    <connections>
+                        <action selector="pinchScaleGesture:" destination="enQ-eQ-rbE" id="dVQ-iZ-bBR"/>
+                    </connections>
+                </pinchGestureRecognizer>
+                <tapGestureRecognizer id="Snd-4o-9vR">
+                    <connections>
+                        <action selector="tapGesture:" destination="enQ-eQ-rbE" id="qRu-4h-qAj"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="1539" y="109"/>
+        </scene>
+    </scenes>
+</document>

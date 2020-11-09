@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad10_2" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="SwiftScanner" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1080" height="810"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XDa-pW-Wy1" userLabel="Button - New Scan">
+                                <rect key="frame" x="50" y="381" width="131" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="New Scan"/>
+                                <connections>
+                                    <action selector="newScanButonDidPush:" destination="BYZ-38-t0r" eventType="touchUpInside" id="veN-K7-uyx"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scan message" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5rz-Xo-4lm" userLabel="Label - Scan Message">
+                                <rect key="frame" x="427" y="383.5" width="226" height="43"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Iux-9l-9F1" userLabel="Battery Status Stack View" customClass="BatteryStatusUIStackView" customModule="SwiftScanner" customModuleProvider="target">
+                                <rect key="frame" x="935" y="740" width="125" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="125" id="SUJ-ij-j6C"/>
+                                    <constraint firstAttribute="height" constant="50" id="TNR-eU-nXK"/>
+                                </constraints>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8to-nL-N5C" userLabel="Button - Send">
+                                <rect key="frame" x="962" y="381" width="68" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Send"/>
+                                <connections>
+                                    <action selector="sendButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ddu-qU-wBh"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fA7-SP-gVZ" userLabel="Button - Delete Scans">
+                                <rect key="frame" x="455" y="498.5" width="170" height="48"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <state key="normal" title="Delete Scans">
+                                    <color key="titleColor" red="1" green="0.094733535390425838" blue="0.11097448163623835" alpha="0.84705882352941175" colorSpace="custom" customColorSpace="displayP3"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteScansButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1ne-e0-qor"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8to-nL-N5C" secondAttribute="trailing" constant="50" id="59I-AM-0kL"/>
+                            <constraint firstItem="8to-nL-N5C" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="N4S-zf-fgw"/>
+                            <constraint firstItem="XDa-pW-Wy1" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="TTT-dM-pJd"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="Iux-9l-9F1" secondAttribute="bottom" constant="20" id="YWr-5k-vzZ"/>
+                            <constraint firstItem="XDa-pW-Wy1" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="cpV-qK-B4U"/>
+                            <constraint firstItem="fA7-SP-gVZ" firstAttribute="top" secondItem="5rz-Xo-4lm" secondAttribute="bottom" constant="72" id="gSu-yh-uI0"/>
+                            <constraint firstItem="fA7-SP-gVZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="gkA-Nl-P2e"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Iux-9l-9F1" secondAttribute="trailing" constant="20" id="iS8-5b-WPC"/>
+                            <constraint firstItem="5rz-Xo-4lm" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yIQ-Ub-N4I"/>
+                            <constraint firstItem="5rz-Xo-4lm" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zXy-1n-nO0"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="batteryStatusControl" destination="Iux-9l-9F1" id="DKc-xd-SkM"/>
+                        <outlet property="deleteScansButton" destination="fA7-SP-gVZ" id="Irm-3P-Pk4"/>
+                        <outlet property="scanMessageLabel" destination="5rz-Xo-4lm" id="dtZ-n6-B9T"/>
+                        <outlet property="sendButton" destination="8to-nL-N5C" id="NXD-wy-Phh"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="132" y="110"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

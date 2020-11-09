@@ -33,20 +33,19 @@ class EAGLView: UIView {
     
     @inline(__always) func eaglLayer() -> CAEAGLLayer { return self.layer as! CAEAGLLayer }
 
-    //The EAGL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:.
-    required  init(coder: NSCoder) {
+    // The EAGL view is stored in the nib file. When it's unarchived it's sent -initWithCoder:.
+    required init(coder: NSCoder) {
         super.init(coder: coder)!
         
         let eagllayer = eaglLayer()
         
         eagllayer.isOpaque = true
-        eagllayer.drawableProperties = [kEAGLDrawablePropertyColorFormat : kEAGLColorFormatRGBA8, kEAGLDrawablePropertyRetainedBacking : true]
+        eagllayer.drawableProperties = [
+            kEAGLDrawablePropertyColorFormat : kEAGLColorFormatRGBA8
+            , kEAGLDrawablePropertyRetainedBacking : true
+        ]
         
         self.contentScaleFactor = 1.0
-    }
-    
-    deinit {
-        self.deleteFramebuffer()
     }
 
     
@@ -56,90 +55,13 @@ class EAGLView: UIView {
             return _context
         }
         set {
-            
             if (_context != newValue) {
-                self.deleteFramebuffer()
                 _context = newValue
-                
                 EAGLContext.setCurrent(nil)
             }
         }
     }
-    
-    func createFramebuffer() {
-        
-        if ((context != nil) && (defaultFramebuffer == 0)) {
 
-            EAGLContext.setCurrent(context)
-            
-            // Create default framebuffer object.
-            glGenFramebuffers(1, &defaultFramebuffer)
-            glBindFramebuffer( GLenum(GL_FRAMEBUFFER), defaultFramebuffer)
-            
-            // Create color render buffer and allocate backing store.
-            glGenRenderbuffers(1, &colorRenderbuffer)
-            glBindRenderbuffer( GLenum(GL_RENDERBUFFER), colorRenderbuffer)
-            context!.renderbufferStorage( GLintptr(GL_RENDERBUFFER), from: eaglLayer())
-            glGetRenderbufferParameteriv( GLenum(GL_RENDERBUFFER), GLenum(GL_RENDERBUFFER_WIDTH), &framebufferWidth)
-            glGetRenderbufferParameteriv( GLenum(GL_RENDERBUFFER), GLenum(GL_RENDERBUFFER_HEIGHT), &framebufferHeight)
-            
-            glGenRenderbuffers(1, &depthRenderbuffer)
-            glBindRenderbuffer( GLenum(GL_RENDERBUFFER), depthRenderbuffer)
-            glRenderbufferStorage( GLenum(GL_RENDERBUFFER), GLenum(GL_DEPTH_COMPONENT16), framebufferWidth, framebufferHeight)
-            glFramebufferRenderbuffer( GLenum(GL_FRAMEBUFFER), GLenum(GL_DEPTH_ATTACHMENT), GLenum(GL_RENDERBUFFER), depthRenderbuffer)
-            
-            glBindRenderbuffer( GLenum(GL_RENDERBUFFER), colorRenderbuffer)
-            
-            glFramebufferRenderbuffer( GLenum(GL_FRAMEBUFFER), GLenum(GL_COLOR_ATTACHMENT0), GLenum(GL_RENDERBUFFER), colorRenderbuffer)
-            
-            if (glCheckFramebufferStatus( GLenum(GL_FRAMEBUFFER)) != GLenum(GL_FRAMEBUFFER_COMPLETE)) {
-                let status = glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER))
-                os_log(.error, log:OSLog.rendering, "Failed to make complete framebuffer object %{Public}@", String(describing: status))
-            }
-        }
-    }
-    
-     func deleteFramebuffer() {
-        
-        if (context != nil) {
-            
-            EAGLContext.setCurrent(context)
-            
-            if (defaultFramebuffer != 0) {
-                
-                glDeleteFramebuffers(1, &defaultFramebuffer)
-                defaultFramebuffer = 0
-            }
-            
-            if (depthRenderbuffer != 0) {
-                
-                glDeleteRenderbuffers(1, &depthRenderbuffer)
-                depthRenderbuffer = 0
-            }
-            
-            if (colorRenderbuffer != 0) {
-                
-                glDeleteRenderbuffers(1, &colorRenderbuffer)
-                colorRenderbuffer = 0
-            }
-        }
-    }
-
- func setFramebuffer() {
-        
-        if (context != nil) {
-            
-            EAGLContext.setCurrent(context)
-            
-            if (defaultFramebuffer == 0) {
-                self.createFramebuffer()
-            }
-            
-            glBindFramebuffer( GLenum(GL_FRAMEBUFFER), defaultFramebuffer)
-            
-            glViewport(0, 0, framebufferWidth, framebufferHeight)
-        }
-    }
     
     func presentFramebuffer() -> Bool {
         
@@ -168,7 +90,7 @@ class EAGLView: UIView {
         // 2) don't add any subviews to the EAGLView. Have the EAGLView be a subview of another "master" view.
         
         // The framebuffer will be re-created at the beginning of the next setFramebuffer method call.
-        self.deleteFramebuffer()
+//        self.deleteFramebuffer()
     }
 
     func getFramebufferSize() -> CGSize {

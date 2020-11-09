@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,11 @@
 		70519B04255247750031AC54 /* Implementations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B03255247750031AC54 /* Implementations.swift */; };
 		70519B07255247A50031AC54 /* StructureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B06255247A50031AC54 /* StructureService.swift */; };
 		70519B0A255248410031AC54 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70519B09255248410031AC54 /* Constants.swift */; };
+		70B751652559081500240441 /* Scan.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70B751642559081500240441 /* Scan.storyboard */; };
+		70B7516825590A6500240441 /* Mesh.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70B7516725590A6500240441 /* Mesh.storyboard */; };
+		70B7516D25592E9D00240441 /* Mesh2.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70B7516C25592E9D00240441 /* Mesh2.storyboard */; };
+		70B7517025592F5C00240441 /* Mesh2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B7516F25592F5C00240441 /* Mesh2ViewController.swift */; };
+		70B7517525594F3000240441 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 70B7517425594F3000240441 /* ZIPFoundation */; };
 		85AAAC8C2486911100C28132 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8B2486911100C28132 /* AppDelegate.swift */; };
 		85AAAC8E2486911100C28132 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8D2486911100C28132 /* SceneDelegate.swift */; };
 		85AAAC902486911100C28132 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AAAC8F2486911100C28132 /* MainViewController.swift */; };
@@ -77,6 +82,10 @@
 		70519B03255247750031AC54 /* Implementations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Implementations.swift; sourceTree = "<group>"; };
 		70519B06255247A50031AC54 /* StructureService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureService.swift; sourceTree = "<group>"; };
 		70519B09255248410031AC54 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		70B751642559081500240441 /* Scan.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Scan.storyboard; sourceTree = "<group>"; };
+		70B7516725590A6500240441 /* Mesh.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Mesh.storyboard; sourceTree = "<group>"; };
+		70B7516C25592E9D00240441 /* Mesh2.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Mesh2.storyboard; sourceTree = "<group>"; };
+		70B7516F25592F5C00240441 /* Mesh2ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh2ViewController.swift; sourceTree = "<group>"; };
 		85AAAC882486911100C28132 /* SwiftScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85AAAC8B2486911100C28132 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85AAAC8D2486911100C28132 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -125,6 +134,7 @@
 				85AAACB624869D0A00C28132 /* Structure.framework in Frameworks */,
 				85AAACB524869D0600C28132 /* ExternalAccessory.framework in Frameworks */,
 				85AAACB324869CF600C28132 /* Accelerate.framework in Frameworks */,
+				70B7517525594F3000240441 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +156,15 @@
 				70519B06255247A50031AC54 /* StructureService.swift */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		70B7516B25592E2800240441 /* Mesh2View */ = {
+			isa = PBXGroup;
+			children = (
+				70B7516F25592F5C00240441 /* Mesh2ViewController.swift */,
+				70B7516C25592E9D00240441 /* Mesh2.storyboard */,
+			);
+			path = Mesh2View;
 			sourceTree = "<group>";
 		};
 		85AAAC7F2486911100C28132 = {
@@ -174,13 +193,13 @@
 				85AAACEC248A368100C28132 /* MainView */,
 				85AAACC12487DFDB00C28132 /* ScanView */,
 				85AAACDB24883C5F00C28132 /* MeshView */,
+				70B7516B25592E2800240441 /* Mesh2View */,
 				85AAACBE2487A85800C28132 /* Logging */,
 				70519AF0254BEEE50031AC54 /* Common.swift */,
 				70519B002552473A0031AC54 /* SystemErrors.swift */,
 				70519B09255248410031AC54 /* Constants.swift */,
 				85AAAC8B2486911100C28132 /* AppDelegate.swift */,
 				85AAAC8D2486911100C28132 /* SceneDelegate.swift */,
-				85AAAC912486911100C28132 /* Main.storyboard */,
 				85AAAC942486911500C28132 /* Assets.xcassets */,
 				85AAAC962486911500C28132 /* LaunchScreen.storyboard */,
 				85AAAC992486911500C28132 /* Info.plist */,
@@ -231,6 +250,7 @@
 				85AAACD3248839C700C28132 /* ColorMap.swift */,
 				85AAACD5248839D900C28132 /* ColorMapAnchor.swift */,
 				85AAACD724883B0000C28132 /* UIColorExtensions.swift */,
+				70B751642559081500240441 /* Scan.storyboard */,
 			);
 			path = ScanView;
 			sourceTree = "<group>";
@@ -243,6 +263,7 @@
 				85AAACE824883D9900C28132 /* CustomShaders.swift */,
 				85AAACE624883D4C00C28132 /* ViewPointController.swift */,
 				85AAACEF248A41DC00C28132 /* ColorizeDelegate.swift */,
+				70B7516725590A6500240441 /* Mesh.storyboard */,
 			);
 			path = MeshView;
 			sourceTree = "<group>";
@@ -255,6 +276,7 @@
 				85E12964248A52260036209E /* BatteryStatusUIStackView.swift */,
 				85E12966248A69420036209E /* BatteryStatusMonitor.swift */,
 				85E12968248A6CF30036209E /* BatteryStatusListenerDelegate.swift */,
+				85AAAC912486911100C28132 /* Main.storyboard */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -276,6 +298,9 @@
 			dependencies = (
 			);
 			name = SwiftScanner;
+			packageProductDependencies = (
+				70B7517425594F3000240441 /* ZIPFoundation */,
+			);
 			productName = SwiftScanner;
 			productReference = 85AAAC882486911100C28132 /* SwiftScanner.app */;
 			productType = "com.apple.product-type.application";
@@ -326,6 +351,9 @@
 				Base,
 			);
 			mainGroup = 85AAAC7F2486911100C28132;
+			packageReferences = (
+				70B7517325594F3000240441 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			productRefGroup = 85AAAC892486911100C28132 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -342,7 +370,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				85AAAC982486911500C28132 /* LaunchScreen.storyboard in Resources */,
+				70B7516825590A6500240441 /* Mesh.storyboard in Resources */,
 				85AAACDA24883B7500C28132 /* Localizable.strings in Resources */,
+				70B751652559081500240441 /* Scan.storyboard in Resources */,
+				70B7516D25592E9D00240441 /* Mesh2.storyboard in Resources */,
 				85AAAC952486911500C28132 /* Assets.xcassets in Resources */,
 				85AAAC932486911100C28132 /* Main.storyboard in Resources */,
 			);
@@ -376,6 +407,7 @@
 				85AAACE924883D9900C28132 /* CustomShaders.swift in Sources */,
 				85E12965248A52260036209E /* BatteryStatusUIStackView.swift in Sources */,
 				70519AF1254BEEE50031AC54 /* Common.swift in Sources */,
+				70B7517025592F5C00240441 /* Mesh2ViewController.swift in Sources */,
 				85AAACD22488399900C28132 /* VisualSettings.swift in Sources */,
 				85AAAC8C2486911100C28132 /* AppDelegate.swift in Sources */,
 				85AAACE324883CE900C28132 /* ScanViewDelegate.swift in Sources */,
@@ -673,6 +705,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		70B7517325594F3000240441 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.11;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		70B7517425594F3000240441 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70B7517325594F3000240441 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 85AAAC802486911100C28132 /* Project object */;
 }
