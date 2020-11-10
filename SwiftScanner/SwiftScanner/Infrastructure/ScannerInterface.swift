@@ -22,6 +22,14 @@ enum ScanningContext {
     case trackingState(_ state: TrackingState)
 }
 
+enum FinalizeContext {
+    case didUpdateProgressNativeColorize(progress: Double)
+    case succeedToNativeColorize
+    case didUpdateProgressEnhancedColorize(progress: Double)
+    case succeedToEnhancedColorize
+    case finished(_ url: String)
+}
+
 protocol ScannerInterface {
     func initialize(layer: CALayer) throws ->  PassthroughSubject<ScanningContext, SystemErrors>
     
@@ -29,7 +37,7 @@ protocol ScannerInterface {
     
     func restartFromCubePlacing()
     
-    func finishModeling() throws -> String
+    func finishModeling() throws -> PassthroughSubject<FinalizeContext, SystemErrors>
     
     func terminate()
 }

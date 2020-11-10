@@ -325,20 +325,32 @@ class ScanViewController: UIViewController {
 //        self.setupMeshViewController(meshViewController: meshViewController, mesh: mesh)
 //        self.present(meshViewController, animated: true, completion: nil)
         
-        let fileURL = try! Implementations.shared.scanner.finishModeling()
-        
-        let storyboard = UIStoryboard(name: "Mesh2", bundle: self.nibBundle)
-        guard let mesh2ViewController = storyboard.instantiateInitialViewController() as? Mesh2ViewController else {
-            fatalError()
-        }
-
-        mesh2ViewController.set(file: fileURL)
-        self.present(mesh2ViewController, animated: true, completion: nil)
-
-        self.state = .viewing
-        self.updateIdleTimer()
-        
-        Implementations.shared.scanner.terminate()
+        _ = try! Implementations.shared.scanner.finishModeling()
+            .sink(receiveCompletion: { completion in
+                
+            }, receiveValue: { context in
+                switch context {
+                case .didUpdateProgressNativeColorize(let progress): break
+                case .succeedToNativeColorize: break
+                case .didUpdateProgressEnhancedColorize(let progress): break
+                case .succeedToEnhancedColorize: break
+                case .finished(let url): do {
+                
+                    let storyboard = UIStoryboard(name: "Mesh2", bundle: self.nibBundle)
+                    guard let mesh2ViewController = storyboard.instantiateInitialViewController() as? Mesh2ViewController else {
+                        fatalError()
+                    }
+                    
+                    mesh2ViewController.set(file: url)
+                    self.present(mesh2ViewController, animated: true, completion: nil)
+                    
+                    self.state = .viewing
+                    self.updateIdleTimer()
+                    
+                    Implementations.shared.scanner.terminate()
+                }
+                }
+            }).store(in: &cancellables)
     }
 
     //MARK: -  Structure Sensor Management
@@ -635,24 +647,35 @@ class ScanViewController: UIViewController {
     // 色を付ける場合に呼ばれる
     func performEnhancedColorize(_ mesh: STMesh, enhancedCompletionHandler: @escaping () -> Void) {
 
-        let handler = DispatchWorkItem { [weak self] in
-            enhancedCompletionHandler()
-            self?.meshViewController?.mesh = mesh
-        }
-        
-        let colorizeCompletionHandler : (Error?) -> Void = { [weak self] error in
-            if error != nil {
-                os_log(.error, log:OSLog.scanning, "Error during colorizing: %{Public}@", error!.localizedDescription)
-            } else {
-                DispatchQueue.main.async(execute: handler)
-                
-                self?._enhancedColorizeTask?.delegate = nil
-                self?._enhancedColorizeTask = nil
-            }
-        }
-        
-        // TODO
-//        _enhancedColorizeTask = try! STColorizer.newColorizeTask(with: mesh, scene: _slamState.scene, keyframes: _slamState.keyFrameManager!.getKeyFrames(), completionHandler: colorizeCompletionHandler, options: [kSTColorizerTypeKey : STColorizerType.textureMapForObject.rawValue, kSTColorizerPrioritizeFirstFrameColorKey: _options.prioritizeFirstFrameColor, kSTColorizerQualityKey: _options.colorizerQuality.rawValue, kSTColorizerTargetNumberOfFacesKey: _options.colorizerTargetNumFaces])
+//        let handler = DispatchWorkItem { [weak self] in
+//            enhancedCompletionHandler()
+//            self?.meshViewController?.mesh = mesh
+//        }
+//
+//        let colorizeCompletionHandler: (Error?) -> Void = { [weak self] error in
+//            if error != nil {
+//                os_log(.error, log:OSLog.scanning, "Error during colorizing: %{Public}@", error!.localizedDescription)
+//            } else {
+//                DispatchQueue.main.async(execute: handler)
+//
+//                self?._enhancedColorizeTask?.delegate = nil
+//                self?._enhancedColorizeTask = nil
+//            }
+//        }
+//
+//        // TODO
+//        _enhancedColorizeTask = try! STColorizer.newColorizeTask(
+//            with: mesh
+//            , scene: _slamState.scene
+//            , keyframes: _slamState.keyFrameManager!.getKeyFrames()
+//            , completionHandler: colorizeCompletionHandler
+//            , options: [
+//                kSTColorizerTypeKey : STColorizerType.textureMapForObject.rawValue
+//                , kSTColorizerPrioritizeFirstFrameColorKey: _options.prioritizeFirstFrameColor
+//                , kSTColorizerQualityKey: _options.colorizerQuality.rawValue
+//                , kSTColorizerTargetNumberOfFacesKey: _options.colorizerTargetNumFaces
+//            ]
+//        )
 //
 //        if _enhancedColorizeTask != nil {
 //
@@ -799,20 +822,20 @@ class ScanViewController: UIViewController {
 }
 
 // MARK: - STBackgroundTaskDelegate プロトコルの実装
-
+// 色をつけるところで呼ばれている
 extension ScanViewController : STBackgroundTaskDelegate {
+    
     func backgroundTask(_ sender: STBackgroundTask!, didUpdateProgress progress: Double) {
-
         let processingStringFormat = NSLocalizedString("PROCESSING_PCT__0__", comment: "")
 
         if sender == _naiveColorizeTask {
             DispatchQueue.main.async(execute: {
-                self.meshViewController?.showMeshViewerMessage(String.init(format: processingStringFormat, Int(progress*20)))
+                self.meshViewController?.showMeshViewerMessage(String(format: processingStringFormat, Int(progress*20)))
             })
         } else if sender == _enhancedColorizeTask {
 
             DispatchQueue.main.async(execute: {
-            self.meshViewController?.showMeshViewerMessage(String.init(format: processingStringFormat, Int(progress*80)+20))
+                self.meshViewController?.showMeshViewerMessage(String(format: processingStringFormat, Int(progress*80)+20))
             })
         }
     }
@@ -846,19 +869,21 @@ extension ScanViewController : ColorizeDelegate {
     /// - Returns: <#description#>
     func meshViewDidRequestColorizing(_ mesh: STMesh, previewCompletionHandler: @escaping () -> Void, enhancedCompletionHandler: @escaping () -> Void) -> Bool {
         // TODO
-//
-//        os_log(.debug, log:OSLog.scanning, "meshViewDidRequestColorizing")
-//
-//        if _naiveColorizeTask != nil || _enhancedColorizeTask != nil { // already one running?
-//
+
+        os_log(.debug, log:OSLog.scanning, "meshViewDidRequestColorizing")
+
+//        if let _ = _naiveColorizeTask, let _ = _enhancedColorizeTask { // already one running
 //            os_log(.debug, log:OSLog.scanning, "Already running background task!")
 //            return false
 //        }
 //
 //        let handler = DispatchWorkItem { [weak self] in
-//            previewCompletionHandler()
+//            previewCompletionHandler() // ← ログ出してるだけ
 //            self?.meshViewController?.mesh = mesh
-//            self?.performEnhancedColorize(mesh, enhancedCompletionHandler: enhancedCompletionHandler)
+//            self?.performEnhancedColorize(
+//                mesh
+//                , enhancedCompletionHandler: enhancedCompletionHandler // ← hideMeshMessage
+//            )
 //        }
 //
 //        let colorizeCompletionHandler : (Error?) -> Void = { [weak self] error in
@@ -871,14 +896,16 @@ extension ScanViewController : ColorizeDelegate {
 //            }
 //        }
 //
-//        do
-//        {
-//            _naiveColorizeTask = try STColorizer.newColorizeTask(with: mesh,
-//                                                                  scene: _slamState.scene,
-//                                                                  keyframes: _slamState.keyFrameManager!.getKeyFrames(),
-//                                                                  completionHandler: colorizeCompletionHandler,
-//                                                                  options: [kSTColorizerTypeKey : STColorizerType.perVertex.rawValue,
-//                                                                            kSTColorizerPrioritizeFirstFrameColorKey: _options.prioritizeFirstFrameColor]
+//        do {
+//            _naiveColorizeTask = try STColorizer.newColorizeTask(
+//                with: mesh
+//                , scene: _slamState.scene
+//                , keyframes: _slamState.keyFrameManager!.getKeyFrames()
+//                , completionHandler: colorizeCompletionHandler
+//                , options: [
+//                    kSTColorizerTypeKey : STColorizerType.perVertex.rawValue
+//                    , kSTColorizerPrioritizeFirstFrameColorKey: _options.prioritizeFirstFrameColor
+//                ]
 //            )
 //
 //            if _naiveColorizeTask != nil {
@@ -894,12 +921,11 @@ extension ScanViewController : ColorizeDelegate {
 //
 //                return true
 //            }
-//        }
-//        catch {
+//        } catch {
 //            os_log(.error, log:OSLog.scanning, "Exception while creating colorize task: %{Public}@", error.localizedDescription)
 //            return false
 //        }
-//
+
         return true
     }
 }

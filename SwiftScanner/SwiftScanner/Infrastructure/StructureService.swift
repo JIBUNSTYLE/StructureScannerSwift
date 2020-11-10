@@ -87,6 +87,12 @@ enum CaptureSessionContext {
     case initialized(session: STCaptureSession)
 }
 
+enum ColorizeContext {
+    case unknown
+    case native(task: STBackgroundTask)
+    case enhanced(task: STBackgroundTask)
+}
+
 class StructureService : NSObject, ScannerInterface {
     
     // TODO: presenter層からstructごと更新可能にする
@@ -128,13 +134,15 @@ class StructureService : NSObject, ScannerInterface {
     
     var captureSessionContext: CaptureSessionContext = .unknown
     
+    var colorizeContext: ColorizeContext = .unknown
+    
     // Most recent gravity vector from IMU.
     var _lastGravity: GLKVector3!
     
 
     var _lastScannableState = false
-    let subject = PassthroughSubject<ScanningContext, SystemErrors>()
-    
+    let scanningSubject = PassthroughSubject<ScanningContext, SystemErrors>()
+    let finalizeSubject = PassthroughSubject<FinalizeContext, SystemErrors>()
 
     /// 描画（OpenGL）設定、キャプチャ設定、SLAM作成設定を初期化し、スキャニングを開始します（CubePlacing）。
     /// - Parameter layer: <#layer description#>
@@ -142,7 +150,7 @@ class StructureService : NSObject, ScannerInterface {
     /// - Returns: <#description#>
     func initialize(layer: CALayer) throws -> PassthroughSubject<ScanningContext, SystemErrors> {
         guard let layer = layer as? CAEAGLLayer else {
-            throw SystemErrors.graphicsInterface(.レイヤーのキャストに失敗)
+            throw SystemErrors.scannerInterface(.レイヤーのキャストに失敗)
         }
         
         // 画面描画処理の初期化
@@ -189,7 +197,7 @@ class StructureService : NSObject, ScannerInterface {
             }
         }
         
-        return self.subject
+        return self.scanningSubject
     }
     
     
@@ -204,7 +212,7 @@ class StructureService : NSObject, ScannerInterface {
                 , let depthAsRgbaVisualizer
                 , let volumeSizeInMeters
         ) = self.scannerContext else {
-            throw SystemErrors.graphicsInterface(.スキャニングが開始されていません)
+            throw SystemErrors.scannerInterface(.スキャニングが開始されていません)
         }
         
         // processDepthFrameで更新された値を使う
@@ -306,19 +314,21 @@ class StructureService : NSObject, ScannerInterface {
     }
     
     /// モデリングを終了します。
-    func finishModeling() throws -> String {
+    func finishModeling() throws -> PassthroughSubject<FinalizeContext, SystemErrors> {
         
         guard case .scanning(
             let scene
-            , _ // let tracker
+            , let tracker
             , _ // let cameraPoseInitializer
             , _ // let cubeRenderer
-            , _ // let keyFrameManager
+            , let keyFrameManager
             , _ // let depthAsRgbaVisualizer
             , let mapper
             , _ // let volumeSizeInMeters
         ) = self.scannerContext
-            , case .initialized(let session) = self.captureSessionContext else { fatalError() }
+            , case .initialized(let session) = self.captureSessionContext else {
+            throw SystemErrors.scannerInterface(.モデリングが開始されていません)
+        }
         
         
         if session.occWriter.isWriting
@@ -332,21 +342,86 @@ class StructureService : NSObject, ScannerInterface {
         mapper.finalizeTriangleMesh()
         
         guard let mesh = scene.lockAndGetMesh() else {
-            throw SystemErrors.graphicsInterface(.meshの生成に失敗)
+            throw SystemErrors.scannerInterface(.meshの生成に失敗)
         }
         
         scene.unlockMesh()
         
         // resetすべき？
-//        mapper.reset()
-//        tracker.reset()
+
 //        scene.clear()
 //        keyFrameManager.clear()
         
         self.scannerContext = .completed(mesh: mesh)
         
-        // ファイルに保存
-        return try self.save(mesh)
+        self.colorizeContext
+            = try self.nativeColorize(mesh, scene: scene, keyFrameManager: keyFrameManager)
+        
+        guard case .native(let nativeColorizeTask) = self.colorizeContext else {
+            fatalError()
+        }
+        
+        // Release the tracking and mapping resources. It will not be possible to resume a scan after this point
+        mapper.reset()
+        tracker.reset()
+            
+        // Rxでいうdo
+        self.finalizeSubject
+            .handleEvents(receiveOutput: { context in
+                
+                switch context {
+                case .succeedToNativeColorize: do {
+                    
+                    // MeshRender.update()が必要か？
+                    
+                    do {
+                        // native colorize が終わったら次を実行する
+                        self.colorizeContext = try self.enhancedColorize(mesh, scene: scene, keyFrameManager: keyFrameManager)
+                        
+                        guard case .enhanced(let enhancedColorizeTask) = self.colorizeContext else {
+                            fatalError()
+                        }
+                        
+                        // We don't need the keyframes anymore now that the final colorizing task was started.
+                        // Clearing it now gives a chance to early release the keyframe memory when the colorizer
+                        // stops needing them.
+                        keyFrameManager.clear()
+                        enhancedColorizeTask.delegate = self
+                        enhancedColorizeTask.start()
+                        
+                    } catch SystemErrors.scannerInterface(let error) {
+                        self.finalizeSubject.send(completion: .failure(SystemErrors.scannerInterface(error)))
+                        
+                    } catch {
+                        fatalError()
+                    }
+                }
+                case .succeedToEnhancedColorize: do {
+                    
+                    // MeshRender.update()が必要か？
+                    
+                    do {
+                        // ファイルに保存
+                        let url = try self.save(mesh)
+                        self.finalizeSubject.send(.finished(url))
+                        self.finalizeSubject.send(completion: .finished)
+                        
+                    } catch SystemErrors.scannerInterface(let error) {
+                        self.finalizeSubject.send(completion: .failure(SystemErrors.scannerInterface(error)))
+                        
+                    } catch {
+                        fatalError()
+                    }
+                }
+                default:
+                    break
+                }
+            })
+        
+        nativeColorizeTask.delegate = self
+        nativeColorizeTask.start()
+        
+        return self.finalizeSubject
     }
     
     func terminate() {
@@ -418,6 +493,70 @@ extension StructureService {
         
         return filepath
     }
+    
+    private func nativeColorize(_ mesh :STMesh, scene: STScene, keyFrameManager: STKeyFrameManager) throws -> ColorizeContext {
+        
+        do {
+            // native color
+            let task = try STColorizer.newColorizeTask(
+                with: mesh
+                , scene: scene
+                , keyframes: keyFrameManager.getKeyFrames()
+                , completionHandler: { [weak self] error in
+                    guard let _self = self else { return }
+                    
+                    if let error = error {
+                        _self.finalizeSubject.send(completion: .failure(SystemErrors.scannerInterface(.nativeColorizeTaskでエラーが発生しました(error: error))))
+                    } else {
+                        // 完了
+                        _self.finalizeSubject.send(.succeedToNativeColorize)
+                    }
+                }
+                , options: [
+                    kSTColorizerTypeKey : STColorizerType.perVertex.rawValue
+                    , kSTColorizerPrioritizeFirstFrameColorKey: Options.prioritizeFirstFrameColor
+                ]
+            )
+            
+            return .native(task: task)
+            
+        } catch let error {
+            throw SystemErrors.scannerInterface(.nativeColorizeTaskの開始に失敗しました(error: error))
+        }
+    }
+    
+    private func enhancedColorize(_ mesh :STMesh, scene: STScene, keyFrameManager: STKeyFrameManager) throws -> ColorizeContext {
+        
+        do {
+            // enhanced color
+            let task = try STColorizer.newColorizeTask(
+                with: mesh
+                , scene: scene
+                , keyframes: keyFrameManager.getKeyFrames()
+                , completionHandler: { [weak self] error in
+                    guard let _self = self else { return }
+                    
+                    if let error = error {
+                        _self.finalizeSubject.send(completion: .failure(SystemErrors.scannerInterface(.enhancedColorizeTaskでエラーが発生しました(error: error))))
+                    } else {
+                        // 完了
+                        _self.finalizeSubject.send(.succeedToEnhancedColorize)
+                    }
+                }
+                , options: [
+                    kSTColorizerTypeKey: STColorizerType.textureMapForObject.rawValue
+                    , kSTColorizerPrioritizeFirstFrameColorKey: Options.prioritizeFirstFrameColor
+                    , kSTColorizerQualityKey: Options.colorizerQuality.rawValue
+                    , kSTColorizerTargetNumberOfFacesKey: Options.colorizerTargetNumFaces
+                ]
+            )
+            
+            return .enhanced(task: task)
+            
+        } catch let error {
+            throw SystemErrors.scannerInterface(.enhancedColorizeTaskの開始に失敗しました(error: error))
+        }
+    }
 }
 
 // MARK: - private for OpenGL
@@ -482,7 +621,7 @@ extension StructureService {
         
         let status = glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER))
         guard glCheckFramebufferStatus(GLenum(GL_FRAMEBUFFER)) == GLenum(GL_FRAMEBUFFER_COMPLETE) else {
-            throw SystemErrors.graphicsInterface(.フレームバッファの初期化に失敗(status: status))
+            throw SystemErrors.scannerInterface(.フレームバッファの初期化に失敗(status: status))
         }
         
         return Buffers(
@@ -499,7 +638,7 @@ extension StructureService {
         // Create an EAGLContext for EAGLView.
         guard let context = EAGLContext(api: .openGLES2) else {
             log("Failed to create EAGLContext")
-            throw SystemErrors.graphicsInterface(.コンテキストの初期化に失敗)
+            throw SystemErrors.scannerInterface(.コンテキストの初期化に失敗)
         }
         
         let buffers = try self.initializeBuffers(context: context, layer: layer)
@@ -527,7 +666,7 @@ extension StructureService {
         guard texError == kCVReturnSuccess
               , let videoTextureCache = _videoTextureCache else {
             log("Error at CVOpenGLESTextureCacheCreate \(texError)")
-            throw SystemErrors.graphicsInterface(.eSTextureCacheの作成に失敗)
+            throw SystemErrors.scannerInterface(.eSTextureCacheの作成に失敗)
         }
         
         var depthAsRgbaTexture: GLuint = 0
@@ -939,7 +1078,7 @@ extension StructureService {
         if self._lastScannableState != cameraPoseInitializer.lastOutput.hasValidPose.boolValue {
             self._lastScannableState = cameraPoseInitializer.lastOutput.hasValidPose.boolValue
             log("%%%%%%% isScannable: \(self._lastScannableState)")
-            self.subject.send(.isScannable(self._lastScannableState))
+            self.scanningSubject.send(.isScannable(self._lastScannableState))
         } else {
             log("さようなら") // <------- 変化がないのでこっちに入っている
         }
@@ -966,7 +1105,7 @@ extension StructureService {
             // Tracking messages have higher priority.
             // Update the tracking message.
             if let trackingState = computeTrackingState(from: tracker.trackerHints) {
-                self.subject.send(.trackingState(trackingState))
+                self.scanningSubject.send(.trackingState(trackingState))
                 
             } else if let colorFrame = colorFrame {
                 if self.maybeAddKeyframeWithDepthFrame(
@@ -977,14 +1116,14 @@ extension StructureService {
                     , keyFrameManager: keyFrameManager
                     , prevFrameTimeStamp: self.prevFrameTimeStamp
                 ) {
-                    self.subject.send(.trackingState(.keepHolding))
+                    self.scanningSubject.send(.trackingState(.keepHolding))
                 }
             } else {
-                self.subject.send(.trackingState(.none))
+                self.scanningSubject.send(.trackingState(.none))
             }
             
         } catch let trackingError as NSError {
-            self.subject.send(.trackingState(.error(trackingError)))
+            self.scanningSubject.send(.trackingState(.error(trackingError)))
         }
         
         self.prevFrameTimeStamp = depthFrame.timestamp
@@ -1128,7 +1267,7 @@ extension StructureService {
 
         // Initialize the scene.
         guard let scene = STScene(context: context) else {
-            throw SystemErrors.graphicsInterface(.sceneの生成に失敗)
+            throw SystemErrors.scannerInterface(.sceneの生成に失敗)
         }
         
         // Initialize the camera pose tracker.
@@ -1146,7 +1285,7 @@ extension StructureService {
 
         // Initialize the camera pose tracker.
         guard let tracker = STTracker(scene: scene, options: trackerOptions) else {
-            throw SystemErrors.graphicsInterface(.trackerの生成に失敗)
+            throw SystemErrors.scannerInterface(.trackerの生成に失敗)
         }
         
         // Set up the initial volume size.
@@ -1159,12 +1298,12 @@ extension StructureService {
             volumeSizeInMeters: volumeSizeInMeters
             , options: [kSTCameraPoseInitializerStrategyKey: STCameraPoseInitializerStrategy.tableTopCube.rawValue]
         ) else {
-            throw SystemErrors.graphicsInterface(.cameraPoseInitializerの生成に失敗)
+            throw SystemErrors.scannerInterface(.cameraPoseInitializerの生成に失敗)
         }
         
         // Set up the cube renderer with the current volume size.
         guard let cubeRenderer = STCubeRenderer(context: context) else {
-            throw SystemErrors.graphicsInterface(.cubeRendererの生成に失敗)
+            throw SystemErrors.scannerInterface(.cubeRendererの生成に失敗)
         }
         cubeRenderer.adjustCubeSize(volumeSizeInMeters)
 
@@ -1175,11 +1314,11 @@ extension StructureService {
         ]
         
         guard let keyFrameManager = STKeyFrameManager(options: keyframeManagerOptions) else {
-            throw SystemErrors.graphicsInterface(.keyFrameManagerの生成に失敗)
+            throw SystemErrors.scannerInterface(.keyFrameManagerの生成に失敗)
         }
         
         guard let depthAsRgbaVisualizer = STDepthToRgba(options: [kSTDepthToRgbaStrategyKey: STDepthToRgbaStrategy.gray.rawValue]) else {
-            throw SystemErrors.graphicsInterface(.depthToRgbaの生成に失敗)
+            throw SystemErrors.scannerInterface(.depthToRgbaの生成に失敗)
         }
         
         return .initialized(
@@ -1245,7 +1384,7 @@ extension StructureService {
         ]
         
         guard let mapper = STMapper(scene: scene, options: mapperOptions) else {
-            throw SystemErrors.graphicsInterface(.mapperの生成に失敗)
+            throw SystemErrors.scannerInterface(.mapperの生成に失敗)
         }
         
         return .scanning(
@@ -1366,7 +1505,7 @@ extension StructureService : STCaptureSessionDelegate {
         log("captureSession(_:didOutputSample:\(sample)type:\(type.rawValue)")
         
         guard let sample = sample else {
-//            self.subject.send(completion: .failure(SystemErrors.graphicsInterface(.出力サンプルの取得に失敗)))
+//            self.scanningSubject.send(completion: .failure(SystemErrors.scannerInterface(.出力サンプルの取得に失敗)))
             log("Output sample not available")
             return
         }
@@ -1423,7 +1562,7 @@ extension StructureService : STCaptureSessionDelegate {
             // Depth information
             let distance = self.distanceToTargetInCentimeters(for: depthFrame)
             log("$$$$$$$ distance: \(distance)")
-            self.subject.send(.distance(distance)) // <----- nan
+            self.scanningSubject.send(.distance(distance)) // <----- nan
                 
             // 共通GL前処理
             // Activate our view framebuffer.
@@ -1529,4 +1668,16 @@ extension StructureService : STCaptureSessionDelegate {
 // MARK: - STBackgroundTaskDelegate プロトコルの実装
 extension StructureService : STBackgroundTaskDelegate {
     
+    /// Colorizeの進捗を取得する
+    /// - Parameters:
+    ///   - sender: <#sender description#>
+    ///   - progress: <#progress description#>
+    func backgroundTask(_ sender: STBackgroundTask?, didUpdateProgress progress: Double) {
+        if case .native = self.colorizeContext {
+            self.finalizeSubject.send(.didUpdateProgressNativeColorize(progress: progress))
+            
+        } else if case .enhanced = self.colorizeContext {
+            self.finalizeSubject.send(.didUpdateProgressEnhancedColorize(progress: progress))
+        }
+    }
 }

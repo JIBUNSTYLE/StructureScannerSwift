@@ -202,7 +202,7 @@ open class MeshViewController: UIViewController, UIGestureRecognizerDelegate {
         self.eview.context = nil
 
         os_log(.debug, log: OSLog.meshView, "Mesh view dismissed")
-}
+    }
     
     //MARK: - MeshViewer setup when loading the mesh
     

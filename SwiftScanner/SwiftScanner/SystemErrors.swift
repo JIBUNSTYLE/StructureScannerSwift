@@ -15,7 +15,7 @@ enum SystemErrors: Error {
         case キャストに失敗
     }
     
-    enum GraphicsInterface: Error {
+    enum ScannerInterface: Error {
         case レイヤーのキャストに失敗
         case コンテキストの初期化に失敗
         case eSTextureCacheの作成に失敗
@@ -30,8 +30,13 @@ enum SystemErrors: Error {
         case 出力サンプルの取得に失敗
         case mapperの生成に失敗
         case meshの生成に失敗
+        case モデリングが開始されていません
+        case nativeColorizeTaskの開始に失敗しました(error: Error)
+        case nativeColorizeTaskでエラーが発生しました(error: Error)
+        case enhancedColorizeTaskの開始に失敗しました(error: Error)
+        case enhancedColorizeTaskでエラーが発生しました(error: Error)
     }
     
     case development(_ error: Development)
-    case graphicsInterface(_ error: GraphicsInterface)
+    case scannerInterface(_ error: ScannerInterface)
 }
