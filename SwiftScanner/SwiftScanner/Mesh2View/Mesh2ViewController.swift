@@ -70,9 +70,9 @@ class Mesh2ViewController: UIViewController {
             log("ERROR")
             return
         }
-        
+
         log("■■■■■■■■■■■■■■■■■■  \(fileURL) ■■■■■■■■■■■■■■■■■■■■■")
-        
+
         let fileManager = FileManager.default
         
         do {
@@ -83,9 +83,10 @@ class Mesh2ViewController: UIViewController {
                 , create: true)
             
             // お掃除
-            let files_before = try fileManager.contentsOfDirectory(at: documentsDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            try files_before.forEach { f in
-                log("file: \(f.absoluteString)")
+            let files = try fileManager.contentsOfDirectory(at: documentsDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            
+            try files.forEach { f in
+                log("DELETE file: \(f.absoluteString)")
                 if !f.pathExtension.elementsEqual("zip") {
                     try fileManager.removeItem(at: f)
                 }
@@ -93,16 +94,21 @@ class Mesh2ViewController: UIViewController {
 
             try fileManager.unzipItem(at: URL(fileURLWithPath: fileURL), to: documentsDir)
             
-            let files_after = try fileManager.contentsOfDirectory(at: documentsDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            files_after.forEach { f in
-                log("file: \(f.absoluteString)")
+            try files.forEach { f in
+                log("file EXISTS: \(f.absoluteString)")
+                if f.pathExtension.elementsEqual("mtl") {
+                    log("mtl: \(try String(contentsOf: f, encoding: .utf8))")
+                }
             }
             
             // Sceneに直接オブジェクトを貼るとテクスチャをイジれないので、チャイルドノードとして持たせる
 
             let modelObj                = SCNMaterial()
+            let data = try Data(contentsOf: documentsDir.appendingPathComponent("dummy.jpg"))
             // diffuse.contentsにテクスチャを指定する
-    //        modelObj.diffuse.contents   = UIImage(named: "Model.jpg")
+            modelObj.diffuse.contents   = UIImage(data: data)
+            
+
 
             let objURL = documentsDir.appendingPathComponent("dummy.obj")
             

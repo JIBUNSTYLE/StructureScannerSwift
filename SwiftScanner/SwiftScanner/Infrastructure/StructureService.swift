@@ -143,7 +143,9 @@ class StructureService : NSObject, ScannerInterface {
     var _lastScannableState = false
     let scanningSubject = PassthroughSubject<ScanningContext, SystemErrors>()
     let finalizeSubject = PassthroughSubject<FinalizeContext, SystemErrors>()
-
+    
+    var cancellables = [AnyCancellable]()
+    
     /// 描画（OpenGL）設定、キャプチャ設定、SLAM作成設定を初期化し、スキャニングを開始します（CubePlacing）。
     /// - Parameter layer: <#layer description#>
     /// - Throws: <#description#>
@@ -338,6 +340,9 @@ class StructureService : NSObject, ScannerInterface {
         }
         
         session.streamingEnabled = false
+        session.delegate = nil
+        
+        self.scanningSubject.send(completion: .finished)
         
         mapper.finalizeTriangleMesh()
         
@@ -346,11 +351,6 @@ class StructureService : NSObject, ScannerInterface {
         }
         
         scene.unlockMesh()
-        
-        // resetすべき？
-
-//        scene.clear()
-//        keyFrameManager.clear()
         
         self.scannerContext = .completed(mesh: mesh)
         
@@ -365,13 +365,12 @@ class StructureService : NSObject, ScannerInterface {
         mapper.reset()
         tracker.reset()
             
-        // Rxでいうdo
-        self.finalizeSubject
-            .handleEvents(receiveOutput: { context in
-                
+        _ = self.finalizeSubject
+            .sink(receiveCompletion: {_ in }
+                  , receiveValue: { context in
                 switch context {
                 case .succeedToNativeColorize: do {
-                    
+                    log("========== succeedToNativeColorize")
                     // MeshRender.update()が必要か？
                     
                     do {
@@ -386,6 +385,8 @@ class StructureService : NSObject, ScannerInterface {
                         // Clearing it now gives a chance to early release the keyframe memory when the colorizer
                         // stops needing them.
                         keyFrameManager.clear()
+                        
+                        log("========== start enhancedColorizeTask")
                         enhancedColorizeTask.delegate = self
                         enhancedColorizeTask.start()
                         
@@ -397,7 +398,7 @@ class StructureService : NSObject, ScannerInterface {
                     }
                 }
                 case .succeedToEnhancedColorize: do {
-                    
+                    log("========== succeedToEnhancedColorize")
                     // MeshRender.update()が必要か？
                     
                     do {
@@ -417,7 +418,9 @@ class StructureService : NSObject, ScannerInterface {
                     break
                 }
             })
+            .store(in: &cancellables)
         
+        log("========== start nativeColorizeTask")
         nativeColorizeTask.delegate = self
         nativeColorizeTask.start()
         
@@ -506,8 +509,10 @@ extension StructureService {
                     guard let _self = self else { return }
                     
                     if let error = error {
+                        log("エラーあるよ \(error)")
                         _self.finalizeSubject.send(completion: .failure(SystemErrors.scannerInterface(.nativeColorizeTaskでエラーが発生しました(error: error))))
                     } else {
+                        log("エラーないよ")
                         // 完了
                         _self.finalizeSubject.send(.succeedToNativeColorize)
                     }

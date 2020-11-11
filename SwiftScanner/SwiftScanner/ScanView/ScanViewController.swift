@@ -99,7 +99,9 @@ class ScanViewController: UIViewController {
         do {
             _ = try Implementations.shared.scanner.initialize(layer: self.eview.layer)
                 .sink(receiveCompletion: { completion in
-                    if case .failure(let error) = completion {
+                    if case .finished = completion {
+                        log("正常終了")
+                    } else if case .failure(let error) = completion {
                         log("\(error)")
                     }
                 }, receiveValue: { context in
@@ -313,7 +315,7 @@ class ScanViewController: UIViewController {
     // DONE: doneButtonPressed/memoryWarningで呼ばれる
     // 状態変更：画面遷移
     private func enterViewingState() {
-        os_log("Preparing for ShowMeshSegue", log: OSLog.meshView, type: .debug)
+        log("=========================== enterViewingState")
       
 //        let mesh = try! Implementations.shared.scanner.finishModeling()
         
@@ -327,15 +329,22 @@ class ScanViewController: UIViewController {
         
         _ = try! Implementations.shared.scanner.finishModeling()
             .sink(receiveCompletion: { completion in
-                
+                if case .finished = completion {
+                    log("正常終了")
+                } else if case .failure(let error) = completion {
+                    log("error: \(error)")
+                }
             }, receiveValue: { context in
                 switch context {
-                case .didUpdateProgressNativeColorize(let progress): break
-                case .succeedToNativeColorize: break
-                case .didUpdateProgressEnhancedColorize(let progress): break
+                case .didUpdateProgressNativeColorize(let progress):
+                    log(">>>>>>>>>> \(progress) - native")
+                case .succeedToNativeColorize:
+                    log("========== succeedToNativeColorize")
+                case .didUpdateProgressEnhancedColorize(let progress):
+                    log(">>>>>>>>>> \(progress) - enhanced")
                 case .succeedToEnhancedColorize: break
-                case .finished(let url): do {
-                
+                case .finished(let url): DispatchQueue.main.async {
+                    log("========== finished: \(url)")
                     let storyboard = UIStoryboard(name: "Mesh2", bundle: self.nibBundle)
                     guard let mesh2ViewController = storyboard.instantiateInitialViewController() as? Mesh2ViewController else {
                         fatalError()
